@@ -66,7 +66,7 @@ def main():
         cam.location = loc
         cam.rotation_euler = rot
         
-        file_path = os.path.join(output_dir, f"planar_calib_{i}.png")
+        file_path = os.path.join(output_dir, f"intrinsic_calib_{i}.png")
         bpy.context.scene.render.filepath = file_path
         
         print(f"Rendering view {i}/{len(captures)-1}: Pos={loc}, Rot={rot}")

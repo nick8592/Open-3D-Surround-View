@@ -16,11 +16,12 @@ This repository contains a suite of tools for **Automated Fisheye Camera Calibra
 /workspaces/AVM/
 ├── scripts/
 │   ├── simulation/
-│   │   ├── generate_calibration_images.py  # Renders chessboard images for calibration
-│   │   └── render_surround_view.py         # Renders final surround view images
+│   │   ├── capture_intrinsic.py            # Renders chessboard images for intrinsic calibration
+│   │   └── capture_extrinsic.py            # Captures images for extrinsic calibration
 │   └── calibration/
-│       ├── calibrate_intrinsics.py         # Calculates K and D matrices
-│       └── verify_calibration.py           # Verifies undistortion using K and D
+│       ├── calibrate_intrinsic.py          # Calculates intrinsic K and D matrices
+│       ├── verify_intrinsic.py             # Verifies undistortion using K and D
+│       └── calibrate_extrinsic.py          # Calculates extrinsic rvec and tvec matrices
 ├── scenes/
 │   └── avm_v1.blend                        # Vehicle scene with cameras
 │   └── calib_intrinsic.blend               # Dedicated calibration scene
@@ -43,31 +44,38 @@ This repository contains a suite of tools for **Automated Fisheye Camera Calibra
 
 ## 🚀 Workflow
 
-### 1. Generate Calibration Data (Synthetic)
+### 1. Capture Intrinsic Images (Synthetic)
 Renders 15 different perspectives of a checkerboard. Run this inside a Blender instance.
 ```bash
-blender -b scenes/calib_intrinsic.blend -P scripts/simulation/generate_calibration_images.py
+blender -b scenes/calib_intrinsic.blend -P scripts/simulation/capture_intrinsic.py
 ```
 
 ### 2. Run Intrinsics Calibration
 Processes the images and computes the intrinsic matrix `K` and distortion `D`.
 ```bash
-python3 scripts/calibration/calibrate_intrinsics.py
+python3 scripts/calibration/calibrate_intrinsic.py
 ```
-*Outputs: `data/calibration/params/intrinsic_params.npz` and `intrinsic_params.xml`.*
+*Outputs: `data/calibration/intrinsic/params/intrinsic_params.npz` and `intrinsic_params.xml`.*
 
-### 3. Verify the Calibration
+### 3. Verify the Intrinsic Calibration
 Checks the quality of the calibration by undistorting a test image.
 ```bash
-python3 scripts/calibration/verify_calibration.py
+python3 scripts/calibration/verify_intrinsic.py
 ```
-*Review the result in `data/calibration/debug/test_undistort.png`.*
+*Review the result in `data/calibration/intrinsic/debug/test_undistort.png`.*
 
-### 4. Render Final Surround View
-Generates simulated Top-View/AVM perspective renders from the calibrated vehicle cameras.
+### 4. Capture Extrinsic Images
+Renders the 4 vehicle cameras positioned around the extrinsics checkerboard setup.
 ```bash
-blender -b scenes/avm_v1.blend -P scripts/simulation/render_surround_view.py
+blender -b scenes/avm_v1.blend -P scripts/simulation/capture_extrinsic.py
 ```
+
+### 5. Run Extrinsic Calibration
+Calculates the physical translation and rotation (rvec/tvec) for each camera.
+```bash
+python3 scripts/calibration/calibrate_extrinsic.py
+```
+*Outputs: Per-camera `.npz` and `.xml` files in `data/calibration/extrinsic/params/`.*
 
 ---
 
@@ -79,5 +87,5 @@ blender -b scenes/avm_v1.blend -P scripts/simulation/render_surround_view.py
 ---
 
 ## ⚙️ Maintenance
-- To add a new camera, update the `cameras` list in `render_surround_view.py`.
-- To change the checkerboard size, update `CHECKERBOARD` constant in `calibrate_intrinsics.py`.
+- To add a new camera, update the `cameras` list in `capture_extrinsic.py`.
+- To change the checkerboard size, update `CHECKERBOARD` constant in `calibrate_intrinsic.py` and `calibrate_extrinsic.py`.

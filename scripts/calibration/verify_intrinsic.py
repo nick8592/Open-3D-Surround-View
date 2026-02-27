@@ -10,7 +10,7 @@ def verify():
         script_dir = os.path.dirname(os.path.abspath(__file__))
         base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
-    img_path = os.path.join(base_dir, "data/calibration/intrinsic/images/planar_calib_0.png")
+    img_path = os.path.join(base_dir, "data/calibration/intrinsic/images/intrinsic_calib_0.png")
     if not os.path.exists(img_path):
         print(f"Error: Target image not found at {img_path}")
         return

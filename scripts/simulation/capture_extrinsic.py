@@ -14,7 +14,7 @@ def main():
     if not os.path.exists(scene_path):
         scene_path = "/workspace/scenes/avm_v1.blend"
 
-    output_dir = os.path.join(base_dir, "data", "outputs", "surround_view")
+    output_dir = os.path.join(base_dir, "data", "calibration", "extrinsic", "images")
     os.makedirs(output_dir, exist_ok=True)
 
     # 2. Open Blender scene file
