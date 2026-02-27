@@ -10,6 +10,15 @@ This repository contains a suite of tools for **Automated Fisheye Camera Calibra
 
 ---
 
+## 🧭 Coordinate System (ISO 8855)
+
+The entire calibration pipeline, 3D math, and exported variables adhere strictly to the **ISO 8855 Automotive Standard (Right-Handed, Z-Up)**:
+- **+X Axis**: Points **Forward** (Through the vehicle's front windshield)
+- **+Y Axis**: Points **Left** (Through the driver's side door)
+- **+Z Axis**: Points **Up** (Through the roof)
+
+Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are natively aligned to `ZYX` intrinsic automotive rotations.
+
 ## 📂 Directory Structure
 
 ```text
