@@ -1,11 +1,11 @@
-# 使用 Ubuntu 22.04 作為基礎，自動適應 Mac M 晶片的 ARM64 架構
+# Use Ubuntu 22.04 as base
 FROM ubuntu:22.04
 
-# 避免安裝過程中的交互詢問
+# Avoid interactive prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 1. 安裝系統核心工具與渲染依賴
-# 這裡包含 OpenCV 視窗顯示與 Blender 執行必備的 OpenGL、X11 函式庫
+# 1. Install core system tools and rendering dependencies
+# Includes libraries for OpenCV window display and Blender OpenGL/X11 requirements
 RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-dev \
@@ -24,26 +24,26 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. 安裝 Blender (以 3.6 LTS 為例)
-# 注意：若需 4.2 版，請替換下方網址。
-# 在 Mac M 晶片 Docker 中，建議下載 Linux x64 版本，Docker 會透過 Rosetta 2 模擬執行
+# 2. Install Blender (LTS 3.6 example)
+# Note: To use Blender 4.2+, replace the download URL accordingly.
+# On Mac M-series Docker, Linux x64 version is often used via Rosetta 2 emulation
 RUN wget https://download.blender.org/release/Blender3.6/blender-3.6.5-linux-x64.tar.xz \
     && tar -xvf blender-3.6.5-linux-x64.tar.xz -C /opt/ \
     && ln -s /opt/blender-3.6.5-linux-x64/blender /usr/local/bin/blender
 
-# 3. 升級 pip 並安裝 Python 關鍵庫
+# 3. Upgrade pip and install critical Python libraries
 RUN pip3 install --upgrade pip
 RUN pip3 install \
-    numpy \
+    "numpy<2" \
     pybind11 \
     scipy \
     fake-bpy-module-3.6 \
     matplotlib
 
-# 4. 設定環境變數
-# 確保 Python 能找到 OpenCV
+# 4. Set environment variables
+# Ensure Python can find system OpenCV
 ENV PYTHONPATH=/usr/lib/python3/dist-packages:$PYTHONPATH
-# 解決部分 OpenCV 初始化時的編碼問題
+# Solve encoding issues for some OpenCV initializations
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
