@@ -23,9 +23,9 @@ def calibrate():
         base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
     # Define paths based on project root
-    input_pattern = os.path.join(base_dir, "data/calibration/images/*.png")
-    debug_dir = os.path.join(base_dir, "data/calibration/debug")
-    params_dir = os.path.join(base_dir, "data/calibration/params")
+    input_pattern = os.path.join(base_dir, "data/calibration/intrinsic/images/*.png")
+    debug_dir = os.path.join(base_dir, "data/calibration/intrinsic/debug")
+    params_dir = os.path.join(base_dir, "data/calibration/intrinsic/params")
     os.makedirs(debug_dir, exist_ok=True)
     os.makedirs(params_dir, exist_ok=True)
 

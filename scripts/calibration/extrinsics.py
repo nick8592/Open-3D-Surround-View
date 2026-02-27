@@ -59,7 +59,7 @@ camera_config = {
 }
 
 def solve_extrinsic_for_camera(cam_name, center):
-    img_path = f'data/outputs/surround_view/{cam_name}.png'
+    img_path = f'data/calibration/extrinsic/images/{cam_name}.png'
     img = cv2.imread(img_path)
     if img is None: return None
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -77,10 +77,14 @@ def solve_extrinsic_for_camera(cam_name, center):
         )
         
         # Debug Visualization
+        # Debug Visualization
         vis_img = img.copy()
         cv2.drawChessboardCorners(vis_img, pattern_size, corners_refined, ret)
         cv2.circle(vis_img, tuple(corners_refined[0][0].astype(int)), 15, (0, 0, 255), -1) 
-        cv2.imwrite(f'data/outputs/surround_view/debug_{cam_name}.png', vis_img)
+        
+        debug_dir = 'data/calibration/extrinsic/debug'
+        os.makedirs(debug_dir, exist_ok=True)
+        cv2.imwrite(os.path.join(debug_dir, f'debug_{cam_name}.png'), vis_img)
         
         # Note: pass D=None, because undistorted_corners are already pinhole-equivalent
         success, rvec, tvec = cv2.solvePnP(obj_pts, undistorted_corners, K, None, flags=cv2.SOLVEPNP_SQPNP)
@@ -98,7 +102,7 @@ def solve_extrinsic_for_camera(cam_name, center):
     return None
 
 results = {}
-output_dir = 'data/calibration/params'
+output_dir = 'data/calibration/extrinsic/params'
 os.makedirs(output_dir, exist_ok=True)
 for cam, center in camera_config.items():
     print(f"Solving {cam}...")

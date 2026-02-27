@@ -12,7 +12,7 @@ def main():
         script_dir = os.path.dirname(os.path.abspath(__file__))
         base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
-    output_dir = os.path.join(base_dir, "data", "calibration", "images")
+    output_dir = os.path.join(base_dir, "data", "calibration", "intrinsic", "images")
     os.makedirs(output_dir, exist_ok=True)
 
     # Try to find a suitable camera

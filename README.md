@@ -26,9 +26,14 @@ This repository contains a suite of tools for **Automated Fisheye Camera Calibra
 │   └── calib_intrinsic.blend               # Dedicated calibration scene
 ├── data/ (Git ignored)
 │   ├── calibration/
-│   │   ├── images/                         # Input images for calibration
-│   │   ├── debug/                          # Debug visualizations (corners, undistort)
-│   │   └── params/                         # Final K and D parameters
+│   │   ├── intrinsic/
+│   │   │   ├── images/                         # Input images for intrinsic calibration
+│   │   │   ├── debug/                          # Debug visualizations (corners, undistort)
+│   │   │   └── params/                         # Final K and D parameters
+│   │   └── extrinsic/
+│   │       ├── images/                         # Input images for extrinsic calibration
+│   │       ├── debug/                          # Debug visualizations (corners, overlays)
+│   │       └── params/                         # Final rvec and tvec parameters
 │   └── outputs/
 │       └── surround_view/                  # Final AVM simulated renders
 └── README.md
