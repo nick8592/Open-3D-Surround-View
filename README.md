@@ -1,12 +1,14 @@
-# AVM Project - Fisheye Calibration and Simulation rendering
+# AVM Project - Fisheye Calibration and Surround-View Simulation
 
-This repository contains a suite of tools for **Automated Fisheye Camera Calibration** and **Surround-View (AVM) Simulation**. It provides a complete pipeline from rendering synthetic calibration data in Blender to calculating high-precision intrinsic parameters and verifying results.
+This repository contains a comprehensive suite of tools for **Automated Fisheye Camera Calibration** and **Surround-View Monitor (AVM) Simulation**. It provides a complete end-to-end pipeline: starting from rendering synthetic calibration checkerboards in Blender, to calculating high-precision intrinsic (K and D) and extrinsic (rvec, tvec, Euler Angles) camera parameters using OpenCV, and rigorously verifying the results through mathematical reprojection error metrics.
 
 ## 🌟 Key Features
-- 🤖 **Automated Render Pipeline**: Generate chessboard patterns from multiple perspectives for robust calibration.
-- 📐 **Fisheye Lens Model**: Supports OpenCV's equidistant (fisheye) distortion model.
-- 💾 **Multi-Format Export**: Saves intrinsic parameters in `.npz` (NumPy) and `.xml` (OpenCV/C++).
-- 🏗 **Industrial Structure**: Clean separation between simulation, calibration logic, and data storage.
+- 🤖 **Automated Render Pipeline**: Programmatically generate simulated chessboard images inside Blender from multiple perspectives to ensure robust calibration data.
+- 📐 **Fisheye Lens Model**: Fully supports OpenCV's robust equidistant (fisheye) distortion model for ultra-wide lenses.
+- 🧭 **ISO 8855 Automotive Standard**: All 3D math and extracted Euler angles natively adhere to the standard vehicle coordinate system (X=Forward, Y=Left, Z=Up).
+- 📊 **Precision Verification**: Built-in verification scripts analyze sub-pixel mean reprojection error and generate visual corner overlays to guarantee mathematical accuracy.
+- 💾 **Multi-Format Export**: Saves all camera parameters in accessible `.npz` (NumPy) formats and `.xml` for seamless integration into OpenCV/C++ environments.
+- 🏗 **Industrial Structure**: Clean, modular separation between Blender simulation scripts, Python camera calibration logic, and organized data storage paths.
 
 ---
 
@@ -30,7 +32,8 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 │   └── calibration/
 │       ├── calibrate_intrinsic.py          # Calculates intrinsic K and D matrices
 │       ├── verify_intrinsic.py             # Verifies undistortion using K and D
-│       └── calibrate_extrinsic.py          # Calculates extrinsic rvec and tvec matrices
+│       ├── calibrate_extrinsic.py          # Calculates extrinsic rvec and tvec matrices
+│       └── verify_extrinsic.py             # Verifies extrinsics via 3D reprojection error
 ├── scenes/
 │   └── avm_v1.blend                        # Vehicle scene with cameras
 │   └── calib_intrinsic.blend               # Dedicated calibration scene
@@ -85,6 +88,13 @@ Calculates the physical translation and rotation (rvec/tvec) for each camera.
 python3 scripts/calibration/calibrate_extrinsic.py
 ```
 *Outputs: Per-camera `.npz` and `.xml` files in `data/calibration/extrinsic/params/`.*
+
+### 6. Verify Extrinsic Calibration
+Mathematically projects the 3D world points back onto the images to calculate sub-pixel reprojection error metrics.
+```bash
+python3 scripts/calibration/verify_extrinsic.py
+```
+*Outputs: Error metrics in terminal and visual overlays in `data/calibration/extrinsic/debug/reproject_*.png`.*
 
 ---
 
