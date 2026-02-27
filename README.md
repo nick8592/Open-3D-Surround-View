@@ -1,41 +1,78 @@
-# AVM Renderer
+# AVM Project - Fisheye Calibration and Simulation rendering
 
-This is a Python script that automates the rendering of a four-way surround view (AVM) from a Blender scene using the Blender Python API (`bpy`). 
+This repository contains a suite of tools for **Automated Fisheye Camera Calibration** and **Surround-View (AVM) Simulation**. It provides a complete pipeline from rendering synthetic calibration data in Blender to calculating high-precision intrinsic parameters and verifying results.
 
-It iterates through specific predefined cameras in a Blender scene and outputs rendered images for each perspective.
+## 🌟 Key Features
+- 🤖 **Automated Render Pipeline**: Generate chessboard patterns from multiple perspectives for robust calibration.
+- 📐 **Fisheye Lens Model**: Supports OpenCV's equidistant (fisheye) distortion model.
+- 💾 **Multi-Format Export**: Saves intrinsic parameters in `.npz` (NumPy) and `.xml` (OpenCV/C++).
+- 🏗 **Industrial Structure**: Clean separation between simulation, calibration logic, and data storage.
 
-## Prerequisites
+---
 
-You need to run this script within an environment that has Blender installed and supports running Python scripts via `bpy` (such as the background rendering mode in Blender). 
+## 📂 Directory Structure
 
-## Structure
-
-- `render_avm.py`: Main rendering script.
-- `scenes/avm_v1.blend`: The default Blender scene file used for rendering.
-- `data/render_output/`: The default directory where the rendered `.jpg` images will be saved.
-
-## How it works
-
-The `render_avm.py` script executes the following steps:
-1. Opens the `avm_v1.blend` scene.
-2. Loops through a predefined set of cameras: `"Cam_Front"`, `"Cam_Back"`, `"Cam_Left"`, `"Cam_Right"`.
-3. Sets the active camera for the scene.
-4. Renders a `.jpg` image for each camera and saves it to the `data/render_output/` folder.
-
-## Running the Script
-
-To run the script inside a headless Blender instance (background mode), you can typically run the following command from the root directory:
-
-```bash
-blender -b scenes/avm_v1.blend -P render_avm.py
+```text
+/workspaces/AVM/
+├── scripts/
+│   ├── simulation/
+│   │   ├── generate_calibration_images.py  # Renders chessboard images for calibration
+│   │   └── render_surround_view.py         # Renders final surround view images
+│   └── calibration/
+│       ├── calibrate_intrinsics.py         # Calculates K and D matrices
+│       └── verify_calibration.py           # Verifies undistortion using K and D
+├── scenes/
+│   └── avm_v1.blend                        # Vehicle scene with cameras
+│   └── calib_intrinsic.blend               # Dedicated calibration scene
+├── data/ (Git ignored)
+│   ├── calibration/
+│   │   ├── images/                         # Input images for calibration
+│   │   ├── debug/                          # Debug visualizations (corners, undistort)
+│   │   └── params/                         # Final K and D parameters
+│   └── outputs/
+│       └── surround_view/                  # Final AVM simulated renders
+└── README.md
 ```
 
-*(Note: The exact command depends on how your Blender environment is packaged or installed.)*
+---
 
-## Outputs
+## 🚀 Workflow
 
-The script will dump four `.jpg` images into `data/render_output/`:
-- `Cam_Front.jpg`
-- `Cam_Back.jpg`
-- `Cam_Left.jpg`
-- `Cam_Right.jpg`
+### 1. Generate Calibration Data (Synthetic)
+Renders 15 different perspectives of a checkerboard. Run this inside a Blender instance.
+```bash
+blender -b scenes/calib_intrinsic.blend -P scripts/simulation/generate_calibration_images.py
+```
+
+### 2. Run Intrinsics Calibration
+Processes the images and computes the intrinsic matrix `K` and distortion `D`.
+```bash
+python3 scripts/calibration/calibrate_intrinsics.py
+```
+*Outputs: `data/calibration/params/intrinsic_params.npz` and `intrinsic_params.xml`.*
+
+### 3. Verify the Calibration
+Checks the quality of the calibration by undistorting a test image.
+```bash
+python3 scripts/calibration/verify_calibration.py
+```
+*Review the result in `data/calibration/debug/test_undistort.png`.*
+
+### 4. Render Final Surround View
+Generates simulated Top-View/AVM perspective renders from the calibrated vehicle cameras.
+```bash
+blender -b scenes/avm_v1.blend -P scripts/simulation/render_surround_view.py
+```
+
+---
+
+## 🛠 Running Environment
+- **Docker**: The project is optimized for VS Code DevContainers.
+- **Blender**: Requires `blender` executable in PATH (version 3.6+ recommended).
+- **Python**: Requires `opencv-python` and `numpy`.
+
+---
+
+## ⚙️ Maintenance
+- To add a new camera, update the `cameras` list in `render_surround_view.py`.
+- To change the checkerboard size, update `CHECKERBOARD` constant in `calibrate_intrinsics.py`.
