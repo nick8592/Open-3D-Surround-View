@@ -1,0 +1,19 @@
+{
+    "name": "AVM_Dev_Env",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-vscode.cpptools",
+                "njpwerner.autodocstring"
+            ]
+        }
+    },
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ],
+    "remoteUser": "root"
+}
