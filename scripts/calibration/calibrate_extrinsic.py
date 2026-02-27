@@ -2,11 +2,23 @@ import cv2
 import numpy as np
 import os
 
-# 1. Intrinsic parameters
-K = np.array([[561.476, 0, 959.527],
-              [0, 449.175, 767.478],
-              [0, 0, 1]], dtype=np.float64)
-D = np.array([[0.00040877], [-0.00274577], [0.0061865], [-0.00363161]], dtype=np.float64)
+import sys
+
+# 1. Load Intrinsic parameters dynamically
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+if os.path.exists("/workspace/data/calibration/intrinsic/params/intrinsic_params.npz"):
+    params_path = "/workspace/data/calibration/intrinsic/params/intrinsic_params.npz"
+else:
+    params_path = os.path.join(base_dir, "data/calibration/intrinsic/params/intrinsic_params.npz")
+
+if not os.path.exists(params_path):
+    print(f"Error: Intrinsic parameters not found at {params_path}")
+    sys.exit(1)
+
+with np.load(params_path) as data:
+    K = data['K']
+    D = data['D']
+print(f"Loaded intrinsic parameters from {params_path}")
 
 def get_pad_3d_points(center_x, center_y, cam_name):
     square_size = 0.25 
@@ -94,9 +106,27 @@ def solve_extrinsic_for_camera(cam_name, center):
             R, _ = cv2.Rodrigues(rvec)
             camera_pos = -np.matrix(R).T * np.matrix(tvec)
             
+            # Extract Pitch, Yaw, Roll using Scipy Extrinsic ZXY mapping
+            # R maps World to Camera. R_cw maps Camera to World.
+            R_cw = np.matrix(R).T
+            # Base camera unrotated orientation: 
+            # X_cam (Right) = +X_world
+            # Y_cam (Down) = -Z_world
+            # Z_cam (Forward) = +Y_world
+            R_base = np.array([
+                [1,  0, 0],
+                [0,  0, 1],
+                [0, -1, 0]
+            ])
+            from scipy.spatial.transform import Rotation as R_scipy
+            # R_veh transforms the base camera to the final rotated position in the World
+            R_veh = R_cw @ np.linalg.inv(R_base)
+            yaw, pitch, roll = R_scipy.from_matrix(R_veh).as_euler('ZXY', degrees=True)
+            
             # Print stats
             print(f"  {cam_name} Success!")
             print(f"    World Position: X={camera_pos[0,0]:.3f}m, Y={camera_pos[1,0]:.3f}m, Z={camera_pos[2,0]:.3f}m")
+            print(f"    Rotation: Yaw={yaw:.1f}°, Pitch={pitch:.1f}°, Roll={roll:.1f}°")
             
             return (rvec, tvec)
     return None
