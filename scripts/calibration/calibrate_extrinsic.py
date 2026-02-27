@@ -26,48 +26,48 @@ def get_pad_3d_points(center_x, center_y, cam_name):
     objp = np.zeros((grid_w * grid_h, 3), np.float32)
 
     if cam_name == "Cam_Front":
-        # Image Top -> +Y (further)
-        # Image Left -> -X (left)
-        start_x = center_x - 3 * square_size
-        start_y = center_y + 2 * square_size
-        for i in range(grid_h):      # Image down -> Y decreases
-            for j in range(grid_w):  # Image right -> X increases
-                objp[i * grid_w + j] = [start_x + j * square_size, start_y - i * square_size, 0]
-
-    elif cam_name == "Cam_Back":
-        # Image Top -> -Y (further backward)
-        # Image Left -> +X (right from car's perspective, but left in backward facing camera)
-        start_x = center_x + 3 * square_size
-        start_y = center_y - 2 * square_size
-        for i in range(grid_h):      # Image down -> Y increases
-            for j in range(grid_w):  # Image right -> X decreases
-                objp[i * grid_w + j] = [start_x - j * square_size, start_y + i * square_size, 0]
-
-    elif cam_name == "Cam_Right":
-        # Image Top -> +X (further right)
-        # Image Left -> +Y (forward)
+        # Image Top -> +X (further Forward)
+        # Image Left -> +Y (Left)
         start_x = center_x + 2 * square_size
         start_y = center_y + 3 * square_size
         for i in range(grid_h):      # Image down -> X decreases
             for j in range(grid_w):  # Image right -> Y decreases
                 objp[i * grid_w + j] = [start_x - i * square_size, start_y - j * square_size, 0]
 
-    elif cam_name == "Cam_Left":
-        # Image Top -> -X (further left)
-        # Image Left -> -Y (backward)
+    elif cam_name == "Cam_Back":
+        # Image Top -> -X (further Backward)
+        # Image Left -> -Y (Right)
         start_x = center_x - 2 * square_size
         start_y = center_y - 3 * square_size
         for i in range(grid_h):      # Image down -> X increases
             for j in range(grid_w):  # Image right -> Y increases
                 objp[i * grid_w + j] = [start_x + i * square_size, start_y + j * square_size, 0]
 
+    elif cam_name == "Cam_Right":
+        # Image Top -> -Y (further Right)
+        # Image Left -> +X (Forward)
+        start_x = center_x + 3 * square_size
+        start_y = center_y - 2 * square_size
+        for i in range(grid_h):      # Image down -> Y increases
+            for j in range(grid_w):  # Image right -> X decreases
+                objp[i * grid_w + j] = [start_x - j * square_size, start_y + i * square_size, 0]
+
+    elif cam_name == "Cam_Left":
+        # Image Top -> +Y (further Left)
+        # Image Left -> -X (Backward)
+        start_x = center_x - 3 * square_size
+        start_y = center_y + 2 * square_size
+        for i in range(grid_h):      # Image down -> Y decreases
+            for j in range(grid_w):  # Image right -> X increases
+                objp[i * grid_w + j] = [start_x + j * square_size, start_y - i * square_size, 0]
+
     return objp, (grid_w, grid_h)
 
 camera_config = {
-    "Cam_Front": (0, 3.5),
-    "Cam_Back":  (0, -3.5),
-    "Cam_Left":  (-2, 0),
-    "Cam_Right": (2, 0)
+    "Cam_Front": (3.5, 0),
+    "Cam_Back":  (-3.5, 0),
+    "Cam_Left":  (0, 2),
+    "Cam_Right": (0, -2)
 }
 
 def solve_extrinsic_for_camera(cam_name, center):
@@ -110,18 +110,18 @@ def solve_extrinsic_for_camera(cam_name, center):
             # R maps World to Camera. R_cw maps Camera to World.
             R_cw = np.matrix(R).T
             # Base camera unrotated orientation: 
-            # X_cam (Right) = +X_world
+            # X_cam (Right) = -Y_world
             # Y_cam (Down) = -Z_world
-            # Z_cam (Forward) = +Y_world
+            # Z_cam (Forward) = +X_world
             R_base = np.array([
-                [1,  0, 0],
-                [0,  0, 1],
-                [0, -1, 0]
+                [ 0,  0,  1],
+                [-1,  0,  0],
+                [ 0, -1,  0]
             ])
             from scipy.spatial.transform import Rotation as R_scipy
             # R_veh transforms the base camera to the final rotated position in the World
             R_veh = R_cw @ np.linalg.inv(R_base)
-            yaw, pitch, roll = R_scipy.from_matrix(R_veh).as_euler('ZXY', degrees=True)
+            yaw, pitch, roll = R_scipy.from_matrix(R_veh).as_euler('ZYX', degrees=True)
             
             # Print stats
             print(f"  {cam_name} Success!")
