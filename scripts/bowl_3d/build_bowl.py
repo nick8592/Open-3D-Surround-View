@@ -1,7 +1,7 @@
 import numpy as np
 import os
 
-output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data/rendering/3d_bowl"))
+output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data/bowl_3d"))
 os.makedirs(output_dir, exist_ok=True)
 obj_path = os.path.join(output_dir, "avm_pure_bowl.obj")
 

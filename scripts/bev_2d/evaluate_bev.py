@@ -14,7 +14,7 @@ base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 intrinsic_params_path = os.path.join(base_dir, "data/calibration/intrinsic/params/intrinsic_params.npz")
 extrinsic_dir = os.path.join(base_dir, "data/calibration/extrinsic/params")
 images_dir = os.path.join(base_dir, "data/calibration/extrinsic/images")
-debug_dir = os.path.join(base_dir, "data/stitching/debug")
+debug_dir = os.path.join(base_dir, "data/bev_2d/debug")
 os.makedirs(debug_dir, exist_ok=True)
 
 # Load intrinsics
@@ -139,4 +139,4 @@ for cam_a, cam_b in pairs:
 heat_map_color[~total_overlap_mask] = (0, 0, 0) # Black out non-overlaps
 
 cv2.imwrite(os.path.join(debug_dir, "evaluation_error_heatmap.png"), heat_map_color)
-print(f"Visual Error Heatmap saved to: data/stitching/debug/evaluation_error_heatmap.png")
+print(f"Visual Error Heatmap saved to: data/bev_2d/debug/evaluation_error_heatmap.png")

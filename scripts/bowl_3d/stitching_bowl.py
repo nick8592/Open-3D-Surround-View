@@ -15,7 +15,7 @@ intrinsic_params_path = os.path.join(base_dir, "data/calibration/intrinsic/param
 extrinsic_dir = os.path.join(base_dir, "data/calibration/extrinsic/params")
 images_dir = os.path.join(base_dir, "data/calibration/extrinsic/images")
 
-output_dir = os.path.join(base_dir, "data/rendering/3d_bowl")
+output_dir = os.path.join(base_dir, "data/bowl_3d")
 luts_dir = os.path.join(output_dir, "luts")
 os.makedirs(output_dir, exist_ok=True)
 os.makedirs(luts_dir, exist_ok=True)

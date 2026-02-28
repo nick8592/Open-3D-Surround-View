@@ -9,7 +9,7 @@ BEV_WIDTH = 1000
 BEV_HEIGHT = 1000
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-luts_dir = os.path.join(base_dir, "data/stitching/luts")
+luts_dir = os.path.join(base_dir, "data/bev_2d/luts")
 images_dir = os.path.join(base_dir, "data/calibration/extrinsic/images")
 
 cameras = ["Cam_Front", "Cam_Left", "Cam_Back", "Cam_Right"]
@@ -89,6 +89,6 @@ fps = NUM_FRAMES / (end_time - start_time)
 print(f"Processed 4x Camera inputs to composite 1000x1000px AVM output.")
 print(f"Performance: {fps:.2f} Frames Per Second (FPS) in Python")
 
-output_path = os.path.join(base_dir, "data/stitching/realtime_demo_bev.png")
+output_path = os.path.join(base_dir, "data/bev_2d/realtime_demo_bev.png")
 cv2.imwrite(output_path, final_bev)
 print(f"Output saved to: {output_path}")

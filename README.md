@@ -147,7 +147,7 @@ Executes the heavy math exactly once, and stores the rulesets (`.npz` LUTs) to m
 ```bash
 python3 scripts/bev_2d/stitching_bev.py
 ```
-*Outputs: Optimized `lut_{Cam}.npz` pre-calculated matrices inside `data/stitching/luts/`.*
+*Outputs: Optimized `lut_{Cam}.npz` pre-calculated matrices inside `data/bev_2d/luts/`.*
 
 **Step 3.2: Simulate Real-Time BEV Rendering**
 Wraps the actual real-world loop. Loads the pre-computed Look-Up Tables into RAM, ingests live camera frames, and instantly maps/stitches the `Bird's-Eye View` composite simulating high FPS performance tracking.
@@ -161,7 +161,7 @@ Mathematically crops and compares shared overlapping sightlines to quantify Extr
 ```bash
 python3 scripts/bev_2d/evaluate_bev.py
 ```
-*Outputs: MAE and RMSE error metrics per corner, and a colorized visual heatmap in `data/stitching/debug/`.*
+*Outputs: MAE and RMSE error metrics per corner, and a colorized visual heatmap in `data/bev_2d/debug/`.*
 
 **Step 3.4: Generate Perfect 3D Bowl Geometry**
 Mathematically constructs a flawless Z-up Polar 3D Bowl topology based on ISO 8855 Coordinate constraints without Spider Leg stretching or Parallax ghosting.

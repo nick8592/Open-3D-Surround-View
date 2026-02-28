@@ -9,7 +9,7 @@ BEV_WIDTH = 1000
 BEV_HEIGHT = 1000
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-luts_dir = os.path.join(base_dir, "data/rendering/3d_bowl/luts")
+luts_dir = os.path.join(base_dir, "data/bowl_3d/luts")
 images_dir = os.path.join(base_dir, "data/calibration/extrinsic/images")
 
 cameras = ["Cam_Front", "Cam_Left", "Cam_Back", "Cam_Right"]
@@ -95,6 +95,6 @@ fps = NUM_FRAMES / (end_time - start_time)
 print(f"Processed 4x Camera inputs to composite 1000x1000px 3D Bowl Texture.")
 print(f"Performance: {fps:.2f} Frames Per Second (FPS) in Python")
 
-output_path = os.path.join(base_dir, "data/rendering/3d_bowl/realtime_demo_bowl.png")
+output_path = os.path.join(base_dir, "data/bowl_3d/realtime_demo_bowl.png")
 cv2.imwrite(output_path, final_bev_rgba)
 print(f"Output saved to: {output_path}")
