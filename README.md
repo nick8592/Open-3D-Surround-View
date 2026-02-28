@@ -1,4 +1,4 @@
-# AVM Project - Fisheye Calibration and Surround-View Simulation
+# Open-3D-Surround-View
 
 This repository contains a comprehensive suite of tools for **Automated Fisheye Camera Calibration** and **Surround-View Monitor (AVM) Simulation**. It provides a complete end-to-end pipeline: starting from rendering synthetic calibration checkerboards in Blender, to calculating high-precision intrinsic (K and D) and extrinsic (rvec, tvec, Euler Angles) camera parameters using OpenCV, and rigorously verifying the results through mathematical reprojection error metrics.
 
