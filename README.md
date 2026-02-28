@@ -138,7 +138,7 @@ python3 scripts/calibration/evaluate_extrinsic.py
 
 ---
 
-### Phase 3: BEV Mapping & Real-Time Simulation
+### Phase 3: 2D BEV Mapping & Real-Time Simulation
 *Mapping the calibrated cameras onto a unified Ground Plane (Z=0) and optimizing for 60FPS dashboard deployment.*
 
 **Step 3.1: Generate BEV Mapping (Look-Up Tables)**
@@ -163,28 +163,31 @@ python3 scripts/bev_2d/evaluate_bev.py
 ```
 *Outputs: MAE and RMSE error metrics per corner, and a colorized visual heatmap in `data/bev_2d/debug/`.*
 
-**Step 3.4: Generate Perfect 3D Bowl Geometry**
+### Phase 4: 3D Bowl Projection & Extrusion
+*Elevating the flat math into a 3D topology to eliminate stretching and parallax ghosting.*
+
+**Step 4.1: Generate Perfect 3D Bowl Geometry**
 Mathematically constructs a flawless Z-up Polar 3D Bowl topology based on ISO 8855 Coordinate constraints without Spider Leg stretching or Parallax ghosting.
 ```bash
 python3 scripts/bowl_3d/build_bowl.py
 ```
 *Outputs: Clean pure mesh `avm_pure_bowl.obj` (with UV mappings) and `avm_pure_bowl.mtl`.*
 
-**Step 3.5: Calculate Extrinsic UV Mappings for the 3D Bowl**
+**Step 4.2: Calculate Extrinsic UV Mappings for the 3D Bowl**
 Reruns the rigorous 3D world physics engine. Unlike the flat 2D projection, it accounts for the actual curvature Z-Height to project physical wall textures flawlessly outwards into the fisheye cameras without severe stretching.
 ```bash
 python3 scripts/bowl_3d/stitching_bowl.py
 ```
 *Outputs: Advanced alpha-blended UV arrays (`lut_bowl_{Cam}.npz`) and a `bowl_texture.png` preview.*
 
-**Step 3.6: Simulate Real-Time 3D ECU Rendering**
+**Step 4.3: Simulate Real-Time 3D ECU Rendering**
 Ingests the newly calculated 3D Extrinsic LUTs and spins up a high-performance vector rendering loop simulating the dashboard display.
 ```bash
 python3 scripts/bowl_3d/render_bowl.py
 ```
 *Outputs: Simulated runtime metrics (~15 FPS natively in Python) and `realtime_demo_bowl.png`.*
 
-**Step 3.7: Preview the generated 3D Bowl Array in 3D Space**
+**Step 4.4: Preview the generated 3D Bowl Array in 3D Space**
 Opens a Blender instance and imports the geometry strictly preserving Z-Up formatting, auto-connecting the material shaders to visually verify the mathematical projection perfection on the 3D model.
 ```bash
 blender -P scripts/simulation/preview_3d_bowl.py
