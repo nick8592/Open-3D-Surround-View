@@ -14,12 +14,16 @@ obj_path = os.path.join(base_dir, "data/rendering/3d_bowl/avm_pure_bowl.obj")
 # We must explicitly enforce axis_up='Z' to preserve our ISO 8855 automotive standard rotations.
 bpy.ops.import_scene.obj(filepath=obj_path, axis_forward='Y', axis_up='Z')
 
-# Switch viewport to Wireframe mode for precise geometric and topological review
+# Switch viewport to Material mode to view the UV Mapped Bowl Texture
 for area in bpy.context.screen.areas:
     if area.type == 'VIEW_3D':
         for space in area.spaces:
             if space.type == 'VIEW_3D':
-                space.shading.type = 'SOLID'
-                space.shading.show_wire = True 
+                space.shading.type = 'MATERIAL'
+                # Force alpha transparency logic if the material uses it
+                if bpy.data.materials.get("BowlTexture"):
+                    mat = bpy.data.materials["BowlTexture"]
+                    mat.blend_method = 'BLEND'
+                    mat.shadow_method = 'NONE'
 
 print("✅ Pure 3D Bowl imported successfully for geometry review!")
