@@ -31,9 +31,9 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 │   │   └── capture_extrinsic.py            # Captures images for extrinsic calibration
 │   └── calibration/
 │       ├── calibrate_intrinsic.py          # Calculates intrinsic K and D matrices
-│       ├── verify_intrinsic.py             # Verifies undistortion using K and D
+│       ├── evaluate_intrinsic.py           # Evaluates undistortion using K and D and curvature variance
 │       ├── calibrate_extrinsic.py          # Calculates extrinsic rvec and tvec matrices
-│       └── verify_extrinsic.py             # Verifies extrinsics via 3D reprojection error
+│       └── evaluate_extrinsic.py           # Evaluates extrinsics via 3D reprojection error
 │   └── stitching/
 │       ├── render_bev.py                   # Maps and renders the 2D Surround-View Bird's-Eye View
 │       └── evaluate_bev.py                 # Evaluates stitching alignment via photometric error
@@ -75,12 +75,12 @@ python3 scripts/calibration/calibrate_intrinsic.py
 ```
 *Outputs: `data/calibration/intrinsic/params/intrinsic_params.npz` and `intrinsic_params.xml`.*
 
-### 3. Verify the Intrinsic Calibration
-Checks the quality of the calibration by undistorting a test image.
+### 3. Evaluate the Intrinsic Calibration
+Checks the quality of the calibration by undistorting a test image and calculating plumb-line curvature variance.
 ```bash
-python3 scripts/calibration/verify_intrinsic.py
+python3 scripts/calibration/evaluate_intrinsic.py
 ```
-*Review the result in `data/calibration/intrinsic/debug/test_undistort.png`.*
+*Review the result in `data/calibration/intrinsic/debug/test_*.png`.*
 
 ### 4. Capture Extrinsic Images
 Renders the 4 vehicle cameras positioned around the extrinsics checkerboard setup.
@@ -95,10 +95,10 @@ python3 scripts/calibration/calibrate_extrinsic.py
 ```
 *Outputs: Per-camera `.npz` and `.xml` files in `data/calibration/extrinsic/params/`.*
 
-### 6. Verify Extrinsic Calibration
+### 6. Evaluate Extrinsic Calibration
 Mathematically projects the 3D world points back onto the images to calculate sub-pixel reprojection error metrics.
 ```bash
-python3 scripts/calibration/verify_extrinsic.py
+python3 scripts/calibration/evaluate_extrinsic.py
 ```
 *Outputs: Error metrics in terminal and visual overlays in `data/calibration/extrinsic/debug/reproject_*.png`.*
 
