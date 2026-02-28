@@ -34,6 +34,9 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 │       ├── verify_intrinsic.py             # Verifies undistortion using K and D
 │       ├── calibrate_extrinsic.py          # Calculates extrinsic rvec and tvec matrices
 │       └── verify_extrinsic.py             # Verifies extrinsics via 3D reprojection error
+│   └── stitching/
+│       ├── render_bev.py                   # Maps and renders the 2D Surround-View Bird's-Eye View
+│       └── evaluate_bev.py                 # Evaluates stitching alignment via photometric error
 ├── scenes/
 │   └── avm_v1.blend                        # Vehicle scene with cameras
 │   └── calib_intrinsic.blend               # Dedicated calibration scene
@@ -49,6 +52,9 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 │   │       └── params/                         # Final rvec and tvec parameters
 │   └── outputs/
 │       └── surround_view/                  # Final AVM simulated renders
+│   └── stitching/
+│       ├── debug/                          # Intermediate BEV projections and evaluation heatmaps
+│       └── bev.png                         # Final stitched Bird's Eye View output
 └── README.md
 ```
 
@@ -95,6 +101,20 @@ Mathematically projects the 3D world points back onto the images to calculate su
 python3 scripts/calibration/verify_extrinsic.py
 ```
 *Outputs: Error metrics in terminal and visual overlays in `data/calibration/extrinsic/debug/reproject_*.png`.*
+
+### 7. Render 2D Surround View (BEV)
+Maps all 4 fisheye cameras onto a unified 3D physical ground plane to stitch a fully composited Bird's-Eye View.
+```bash
+python3 scripts/stitching/render_bev.py
+```
+*Outputs: The compiled `bev.png` and intermediate mapping visualizers in `data/stitching/debug/`.*
+
+### 8. Evaluate Stitching Alignment
+Mathematically crops and compares shared overlapping sightlines to quantify Extrinsic photometric error.
+```bash
+python3 scripts/stitching/evaluate_bev.py
+```
+*Outputs: MAE and RMSE error metrics per corner, and a colorized visual heatmap in `data/stitching/debug/`.*
 
 ---
 
