@@ -35,7 +35,8 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 │       ├── calibrate_extrinsic.py          # Calculates extrinsic rvec and tvec matrices
 │       └── evaluate_extrinsic.py           # Evaluates extrinsics via 3D reprojection error
 │   └── stitching/
-│       ├── render_bev.py                   # Maps and renders the 2D Surround-View Bird's-Eye View
+│       ├── stitching_bev.py                # Maps logical BEV and exports optimized map/weight LUTs
+│       ├── render_bev.py                   # Real-time simulation loop that loads LUTs to stitch LIVE frames
 │       └── evaluate_bev.py                 # Evaluates stitching alignment via photometric error
 ├── scenes/
 │   └── avm_v1.blend                        # Vehicle scene with cameras
@@ -102,14 +103,22 @@ python3 scripts/calibration/evaluate_extrinsic.py
 ```
 *Outputs: Error metrics in terminal and visual overlays in `data/calibration/extrinsic/debug/reproject_*.png`.*
 
-### 7. Render 2D Surround View (BEV)
-Maps all 4 fisheye cameras onto a unified 3D physical ground plane to stitch a fully composited Bird's-Eye View.
+### 7. Generate BEV Mapping (Look-Up Tables)
+Maps all 4 fisheye cameras onto a unified 3D physical ground plane to calculate rendering coordinates & alpha weights.
+Executes the heavy math exactly once, and stores the rulesets (`.npz` LUTs) to memory.
+```bash
+python3 scripts/stitching/stitching_bev.py
+```
+*Outputs: Optimized `lut_{Cam}.npz` pre-calculated matrices inside `data/stitching/luts/`.*
+
+### 8. Simulate Real-Time BEV Rendering
+Wraps the actual real-world loop. Loads the pre-computed Look-Up Tables into RAM, ingests live camera frames, and instantly maps/stitches the `Bird's-Eye View` composite simulating high FPS performance tracking.
 ```bash
 python3 scripts/stitching/render_bev.py
 ```
-*Outputs: The compiled `bev.png` and intermediate mapping visualizers in `data/stitching/debug/`.*
+*Outputs: Evaluated python runtime metrics (e.g. `~14 FPS`) and the final `realtime_demo_bev.png`.*
 
-### 8. Evaluate Stitching Alignment
+### 9. Evaluate Stitching Alignment
 Mathematically crops and compares shared overlapping sightlines to quantify Extrinsic photometric error.
 ```bash
 python3 scripts/stitching/evaluate_bev.py
