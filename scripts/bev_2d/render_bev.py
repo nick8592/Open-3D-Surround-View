@@ -1,8 +1,9 @@
-import cv2
-import numpy as np
 import os
 import sys
 import time
+
+import cv2
+import numpy as np
 
 PIXELS_PER_METER = 100
 BEV_WIDTH = 1000
@@ -19,21 +20,23 @@ print("Loading pre-computed AVM Look-Up Tables (LUTs)...")
 for cam in cameras:
     lut_path = os.path.join(luts_dir, f"lut_{cam}.npz")
     if not os.path.exists(lut_path):
-        print(f"Error: Missing LUT for {cam}. Run stitching_bev.py first to generate them.")
+        print(
+            f"Error: Missing LUT for {cam}. Run stitching_bev.py first to generate them."
+        )
         sys.exit(1)
-        
+
     with np.load(lut_path) as data:
         # Pre-calculated projection coordinates
-        map_x = data['map_x']
-        map_y = data['map_y']
+        map_x = data["map_x"]
+        map_y = data["map_y"]
         # Pre-normalized alpha blending weight
-        weight = data['weight']
-        
+        weight = data["weight"]
+
         luts[cam] = {
             "map_x": map_x,
             "map_y": map_y,
             # Expand weight to 3 channels for fast vectorized color multiplication
-            "weight": np.stack([weight]*3, axis=-1).astype(np.float32) 
+            "weight": np.stack([weight] * 3, axis=-1).astype(np.float32),
         }
 
 print("\nStarting simulated Real-Time Render loop...")
@@ -43,22 +46,33 @@ frames = {}
 for cam in cameras:
     frames[cam] = cv2.imread(os.path.join(images_dir, f"{cam}.png"))
 
+
 # Pre-draw the Car Icon overlay
 def create_car_overlay():
     overlay = np.zeros((BEV_HEIGHT, BEV_WIDTH, 3), dtype=np.uint8)
-    car_top = int(BEV_HEIGHT/2 - 2.4 * PIXELS_PER_METER)
-    car_bot = int(BEV_HEIGHT/2 + 2.4 * PIXELS_PER_METER)
-    car_left = int(BEV_WIDTH/2 - 0.9 * PIXELS_PER_METER)
-    car_right = int(BEV_WIDTH/2 + 0.9 * PIXELS_PER_METER)
-    
+    car_top = int(BEV_HEIGHT / 2 - 2.4 * PIXELS_PER_METER)
+    car_bot = int(BEV_HEIGHT / 2 + 2.4 * PIXELS_PER_METER)
+    car_left = int(BEV_WIDTH / 2 - 0.9 * PIXELS_PER_METER)
+    car_right = int(BEV_WIDTH / 2 + 0.9 * PIXELS_PER_METER)
+
     cv2.rectangle(overlay, (car_left, car_top), (car_right, car_bot), (30, 30, 30), -1)
-    cv2.rectangle(overlay, (car_left, car_top), (car_right, car_bot), (255, 255, 255), 3)
-    cv2.putText(overlay, "FRONT", (int(BEV_WIDTH/2 - 40), car_top + 40), 
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+    cv2.rectangle(
+        overlay, (car_left, car_top), (car_right, car_bot), (255, 255, 255), 3
+    )
+    cv2.putText(
+        overlay,
+        "FRONT",
+        (int(BEV_WIDTH / 2 - 40), car_top + 40),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (255, 255, 255),
+        2,
+    )
     return overlay
 
+
 car_overlay = create_car_overlay()
-car_mask = (car_overlay > 0)
+car_mask = car_overlay > 0
 
 # Simulate 50 frames to measure FPS
 NUM_FRAMES = 50
@@ -67,19 +81,26 @@ start_time = time.time()
 for i in range(NUM_FRAMES):
     # This loop represents what happens EVERY SINGLE FRAME in a real car dashboard
     bev = np.zeros((BEV_HEIGHT, BEV_WIDTH, 3), dtype=np.float32)
-    
+
     for cam in cameras:
         lut = luts[cam]
         img = frames[cam]
-        
+
         # 1. Fetch exact pixel colors instantly mapping curved 180 FOV to flat ground
-        warped = cv2.remap(img, lut["map_x"], lut["map_y"], cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0,0,0))
-        
+        warped = cv2.remap(
+            img,
+            lut["map_x"],
+            lut["map_y"],
+            cv2.INTER_LINEAR,
+            borderMode=cv2.BORDER_CONSTANT,
+            borderValue=(0, 0, 0),
+        )
+
         # 2. Multiply by alpha weight and composite instantly (no complex math)
         bev += warped.astype(np.float32) * lut["weight"]
-        
+
     final_bev = bev.astype(np.uint8)
-    
+
     # Render UI Overlay
     final_bev[car_mask] = car_overlay[car_mask]
 

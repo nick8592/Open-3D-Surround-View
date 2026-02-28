@@ -1,5 +1,7 @@
-import bpy
 import os
+
+import bpy
+
 
 def main():
     # Determine project root (base_dir)
@@ -32,10 +34,10 @@ def main():
     for cam_name in cameras:
         if cam_name in bpy.data.objects:
             bpy.context.scene.camera = bpy.data.objects[cam_name]
-            
+
             file_path = os.path.join(output_dir, f"{cam_name}.png")
             bpy.context.scene.render.filepath = file_path
-            
+
             print(f"Rendering {cam_name}...")
             bpy.ops.render.render(write_still=True)
             print(f"Saved to: {file_path}")
@@ -43,6 +45,7 @@ def main():
             print(f"Warning: Camera {cam_name} not found in scene")
 
     print("Four-way surround view rendering complete!")
+
 
 if __name__ == "__main__":
     main()

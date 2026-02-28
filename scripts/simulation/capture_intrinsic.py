@@ -1,6 +1,8 @@
-import bpy
-import os
 import math
+import os
+
+import bpy
+
 
 def main():
     # Determine project root (base_dir)
@@ -22,12 +24,14 @@ def main():
     cam = bpy.data.objects.get("Camera")
     if not cam:
         cam = bpy.data.objects.get("Cam_Front")
-    
+
     if not cam:
-        all_cameras = [obj for obj in bpy.data.objects if obj.type == 'CAMERA']
+        all_cameras = [obj for obj in bpy.data.objects if obj.type == "CAMERA"]
         if all_cameras:
             cam = all_cameras[0]
-            print(f"Warning: 'Camera' not found. Using first available camera: '{cam.name}'")
+            print(
+                f"Warning: 'Camera' not found. Using first available camera: '{cam.name}'"
+            )
         else:
             print("Error: No camera objects found in the scene.")
             print("Available objects:", [obj.name for obj in bpy.data.objects])
@@ -39,38 +43,51 @@ def main():
     # The checkerboard is at (0, 0, 0)
     captures = [
         # --- Group A: Center & Height variations (3 images) ---
-        ((0, 0, 2.0), (0, 0, 0)),                             # High center
-        ((0, 0, 1.5), (0, 0, 0)),                             # Mid center
-        ((0, 0, 1.0), (0, 0, 0)),                             # Low center (Extreme zoom)
-        
+        ((0, 0, 2.0), (0, 0, 0)),  # High center
+        ((0, 0, 1.5), (0, 0, 0)),  # Mid center
+        ((0, 0, 1.0), (0, 0, 0)),  # Low center (Extreme zoom)
         # --- Group B: Radical Tilted Views (4 images) ---
-        ((0.6, 0.6, 1.4), (math.radians(-25), math.radians(25), 0)),   # Top-Right aggressive
-        ((-0.6, -0.6, 1.4), (math.radians(25), math.radians(-25), 0)), # Bottom-Left aggressive
-        ((0.6, -0.6, 1.4), (math.radians(25), math.radians(25), 0)),  # Bottom-Right aggressive
-        ((-0.6, 0.6, 1.4), (math.radians(-25), math.radians(-25), 0)), # Top-Left aggressive
-        
+        (
+            (0.6, 0.6, 1.4),
+            (math.radians(-25), math.radians(25), 0),
+        ),  # Top-Right aggressive
+        (
+            (-0.6, -0.6, 1.4),
+            (math.radians(25), math.radians(-25), 0),
+        ),  # Bottom-Left aggressive
+        (
+            (0.6, -0.6, 1.4),
+            (math.radians(25), math.radians(25), 0),
+        ),  # Bottom-Right aggressive
+        (
+            (-0.6, 0.6, 1.4),
+            (math.radians(-25), math.radians(-25), 0),
+        ),  # Top-Left aggressive
         # --- Group C: Near-Edge Distortion Tests (4 images) ---
-        ((1.2, 0, 1.2), (0, math.radians(45), 0)),            # Extreme Right
-        ((-1.2, 0, 1.2), (0, math.radians(-45), 0)),          # Extreme Left
-        ((0, 1.2, 1.2), (math.radians(-45), 0, 0)),           # Extreme Top
-        ((0, -1.2, 1.2), (math.radians(45), 0, 0)),           # Extreme Bottom
-        
+        ((1.2, 0, 1.2), (0, math.radians(45), 0)),  # Extreme Right
+        ((-1.2, 0, 1.2), (0, math.radians(-45), 0)),  # Extreme Left
+        ((0, 1.2, 1.2), (math.radians(-45), 0, 0)),  # Extreme Top
+        ((0, -1.2, 1.2), (math.radians(45), 0, 0)),  # Extreme Bottom
         # --- Group D: Diagonal & Roll variations (4 images) ---
-        ((0.8, 0.8, 1.6), (math.radians(-20), math.radians(20), math.radians(45))), # Diagonal with Roll
+        (
+            (0.8, 0.8, 1.6),
+            (math.radians(-20), math.radians(20), math.radians(45)),
+        ),  # Diagonal with Roll
         ((-0.8, 0.8, 1.6), (math.radians(-20), math.radians(-20), math.radians(-45))),
         ((0.8, -0.8, 1.6), (math.radians(20), math.radians(20), math.radians(-45))),
-        ((0, 0, 1.8), (0, 0, math.radians(90)))               # Top-down with 90deg roll
+        ((0, 0, 1.8), (0, 0, math.radians(90))),  # Top-down with 90deg roll
     ]
 
     for i, (loc, rot) in enumerate(captures):
         cam.location = loc
         cam.rotation_euler = rot
-        
+
         file_path = os.path.join(output_dir, f"intrinsic_calib_{i}.png")
         bpy.context.scene.render.filepath = file_path
-        
+
         print(f"Rendering view {i}/{len(captures)-1}: Pos={loc}, Rot={rot}")
         bpy.ops.render.render(write_still=True)
+
 
 if __name__ == "__main__":
     main()
