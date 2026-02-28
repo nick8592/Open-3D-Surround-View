@@ -16,7 +16,9 @@ intrinsic_params_path = os.path.join(base_dir, "data/calibration/intrinsic/param
 extrinsic_dir = os.path.join(base_dir, "data/calibration/extrinsic/params")
 images_dir = os.path.join(base_dir, "data/calibration/extrinsic/images")
 output_dir = os.path.join(base_dir, "data/stitching")
+debug_dir = os.path.join(output_dir, "debug")
 os.makedirs(output_dir, exist_ok=True)
+os.makedirs(debug_dir, exist_ok=True)
 
 # Load intrinsics
 if not os.path.exists(intrinsic_params_path):
@@ -99,6 +101,35 @@ for cam in cameras:
     valid_mask = valid_mask & (~car_mask)
     
     weight = weight * valid_mask.astype(np.float32)
+    
+    # --- DEBUG SAVING ---
+    # 1. Undistorted camera view
+    # Extreme fisheye lenses (~180 FOV) mathematically stretch to infinity on flat pinhole projections.
+    # OpenCV's auto-estimator pushes those edges to pure white/black. We scale the focal lengths artificially 
+    # (e.g., * 0.5) to shrink the infinite projection into a visible cropped circle for debugging.
+    scale = 0.5
+    new_K = K.copy()
+    new_K[0,0] = K[0,0] * scale
+    new_K[1,1] = K[1,1] * scale
+    
+    # Use initUndistortRectifyMap + remap for performance standard consistency
+    map1, map2 = cv2.fisheye.initUndistortRectifyMap(K, D, np.eye(3), new_K, (img_w, img_h), cv2.CV_16SC2)
+    undistorted_img = cv2.remap(img, map1, map2, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+    cv2.imwrite(os.path.join(debug_dir, f"{cam}_01_undistorted.png"), undistorted_img)
+    
+    # 2. View projected on BEV plane
+    cv2.imwrite(os.path.join(debug_dir, f"{cam}_02_project_bev.png"), warped)
+    
+    # 3. Mask before weight
+    cv2.imwrite(os.path.join(debug_dir, f"{cam}_03_mask_before_weight.png"), (valid_mask * 255).astype(np.uint8))
+    
+    # 4. Mask after weight
+    cv2.imwrite(os.path.join(debug_dir, f"{cam}_04_mask_after_weight.png"), (weight * 255).astype(np.uint8))
+    
+    # 5. Weighted mask applied and project on BEV plane
+    weighted_warped = (warped.astype(np.float32) * weight[..., np.newaxis]).astype(np.uint8)
+    cv2.imwrite(os.path.join(debug_dir, f"{cam}_05_weighted_project_bev.png"), weighted_warped)
+    # --------------------
     
     # 5. Accumulate colors
     for c in range(3):
