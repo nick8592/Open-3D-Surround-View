@@ -26,9 +26,10 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 ```text
 /workspaces/AVM/
 ├── docs/                                   # Theory, logic, and mathematics documentation
-│   ├── 01_calibration_theory.md
-│   ├── 02_stitching_and_lut.md
-│   └── 03_evaluation_metrics.md
+│   ├── 01_camera_calibration.md
+│   ├── 02_bev_2d_mapping.md
+│   ├── 03_bowl_3d_mapping.md
+│   └── 04_evaluation_metrics.md
 ├── scripts/
 │   ├── simulation/
 │   │   ├── capture_intrinsic.py            # Renders chessboard images for intrinsic calibration
@@ -74,9 +75,10 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 
 For developers seeking to understand the background physics, mathematical models, and architectural decisions powering this pipeline, please refer to the dedicated theory guides:
 
-1. [Calibration Theory & Coordinate Systems](docs/01_calibration_theory.md): Explains ISO 8855 standard geometry, fisheye intrinsic mathematical formulation, and extrinsic point-matching physics.
-2. [Stitching & Look-Up Tables (LUT)](docs/02_stitching_and_lut.md): Details the reverse-projection math from the BEV Z=0 ground plane and the hardware-accelerated Look-Up Table optimizations used for real-time dashboard ECU operation.
-3. [Evaluation Metrics & Precision](docs/03_evaluation_metrics.md): Breaks down the "Holy Trinity" of calibration proofs including Plumb-Line Curvature, Extrinsic Sub-Pixel Reprojection, and overlapping Photometric Area tracking.
+1. [Calibration Theory & Coordinate Systems](docs/01_camera_calibration.md): Explains ISO 8855 standard geometry, fisheye intrinsic mathematical formulation, and extrinsic point-matching physics.
+2. [2D BEV Mapping & Look-Up Tables (LUT)](docs/02_bev_2d_mapping.md): Details the reverse-projection math from the flat Z=0 ground plane and the hardware-accelerated Extrinsic LUT optimizations used for real-time dashboard ECU operation.
+3. [3D Bowl Projection Architecture](docs/03_bowl_3d_mapping.md): Mathematically details the industry transition from flat representations to curved 3D topology (Z > 0 walls) to solve Spider-Leg corner stretching and Parallax flat-mat ghosting.
+4. [Evaluation Metrics & Precision](docs/04_evaluation_metrics.md): Breaks down the "Holy Trinity" of calibration proofs including Plumb-Line Curvature, Extrinsic Sub-Pixel Reprojection, and overlapping Photometric Area tracking.
 
 ---
 
