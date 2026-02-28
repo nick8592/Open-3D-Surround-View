@@ -32,8 +32,11 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 ├── scripts/
 │   ├── simulation/
 │   │   ├── capture_intrinsic.py            # Renders chessboard images for intrinsic calibration
-│   │   └── capture_extrinsic.py            # Captures images for extrinsic calibration
-│   └── calibration/
+│   │   ├── capture_extrinsic.py            # Captures images for extrinsic calibration
+│   │   └── preview_3d_bowl.py              # Opens Blender specifically to view Z-up generated meshes
+│   ├── rendering/
+│   │   └── build_3d_bowl.py                # Constructs clean, mathematical 3D Bowl topology (`avm_pure_bowl.obj`)
+│   ├── calibration/
 │       ├── calibrate_intrinsic.py          # Calculates intrinsic K and D matrices
 │       ├── evaluate_intrinsic.py           # Evaluates undistortion using K and D and curvature variance
 │       ├── calibrate_extrinsic.py          # Calculates extrinsic rvec and tvec matrices
@@ -155,6 +158,19 @@ Mathematically crops and compares shared overlapping sightlines to quantify Extr
 python3 scripts/stitching/evaluate_bev.py
 ```
 *Outputs: MAE and RMSE error metrics per corner, and a colorized visual heatmap in `data/stitching/debug/`.*
+
+**Step 3.4: Generate Perfect 3D Bowl Geometry**
+Mathmatically constructs a flawless Z-up Polar 3D Bowl topology based on ISO 8855 Coordinate constraints without Spider Leg stretching or Parallax ghosting.
+```bash
+python3 scripts/rendering/build_3d_bowl.py
+```
+*Outputs: Clean pure mesh `avm_pure_bowl.obj` in `data/rendering/3d_bowl/`.*
+
+**Step 3.5: Preview the generated 3D Bowl**
+Opens a Blender instance and imports the geometry strictly preserving Z-Up formatting to review wireframes and topologies.
+```bash
+blender -P scripts/simulation/preview_3d_bowl.py
+```
 
 ---
 
