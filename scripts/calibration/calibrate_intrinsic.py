@@ -1,3 +1,9 @@
+"""
+Module: calibrate_intrinsic.py
+
+This module provides functionality related to calibrate intrinsic.
+"""
+
 import glob
 import os
 
@@ -80,7 +86,7 @@ def calibrate():
 
         # Calibration flags for Equidistant model
         # Note: cv2.fisheye.CALIB_FIX_ASPECT_RATIO does not exist in some versions,
-        # using standard flags.
+        # Using standard flags.
         rms, _, _, _, _ = cv2.fisheye.calibrate(
             objpoints,
             imgpoints,

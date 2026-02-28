@@ -1,3 +1,9 @@
+"""
+Module: capture_extrinsic.py
+
+This module provides functionality related to capture extrinsic.
+"""
+
 import os
 
 import bpy

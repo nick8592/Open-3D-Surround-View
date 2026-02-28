@@ -1,3 +1,9 @@
+"""
+Module: stitching_bev.py
+
+This module provides functionality related to stitching bev.
+"""
+
 import os
 import sys
 
@@ -8,8 +14,8 @@ import numpy as np
 PIXELS_PER_METER = 100
 BEV_WIDTH = 1000  # 10m x 10m area
 BEV_HEIGHT = 1000
-X_RANGE = (-5.0, 5.0)  # meters (from bottom to top of image)
-Y_RANGE = (-5.0, 5.0)  # meters (from right to left of image)
+X_RANGE = (-5.0, 5.0)  # Meters (from bottom to top of image)
+Y_RANGE = (-5.0, 5.0)  # Meters (from right to left of image)
 
 # Paths
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
@@ -41,8 +47,8 @@ print("Initializing 3D spatial mapping grid...")
 u, v = np.meshgrid(np.arange(BEV_WIDTH), np.arange(BEV_HEIGHT))
 
 # In automotive standard (X forward, Y left):
-# v (row 0) is top of image -> max X (+5m).
-# u (col 0) is left of image -> max Y (+5m).
+# V (row 0) is top of image -> max X (+5m).
+# U (col 0) is left of image -> max Y (+5m).
 X = X_RANGE[1] - (v / PIXELS_PER_METER)
 Y = Y_RANGE[1] - (u / PIXELS_PER_METER)
 Z = np.zeros_like(X)
@@ -180,7 +186,7 @@ print(
     "\nGenerating and saving optimized LUTs (Look-Up Tables) for Real-Time rendering..."
 )
 # We pre-divide the weights here so the real-time render loop doesn't have to do
-# floating point division on every pixel, every frame.
+# Floating point division on every pixel, every frame.
 safe_blend_weights = np.maximum(blend_weights, 1e-6)
 
 for cam, maps in camera_maps.items():

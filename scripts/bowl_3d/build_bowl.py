@@ -1,3 +1,9 @@
+"""
+Module: build_bowl.py
+
+This module provides functionality related to build bowl.
+"""
+
 import os
 
 import numpy as np
@@ -43,8 +49,8 @@ for r_idx in range(1, NUM_RINGS + 1):
 
     # Generate points around the ring
     for s_idx in range(NUM_SLICES):
-        # theta = 0 points Forward (+X)
-        # theta = pi/2 points Left (+Y)
+        # Theta = 0 points Forward (+X)
+        # Theta = pi/2 points Left (+Y)
         theta = (s_idx / NUM_SLICES) * 2.0 * np.pi
 
         x = radius * np.cos(theta)

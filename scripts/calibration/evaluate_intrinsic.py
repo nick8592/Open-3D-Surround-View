@@ -1,3 +1,9 @@
+"""
+Module: evaluate_intrinsic.py
+
+This module provides functionality related to evaluate intrinsic.
+"""
+
 import os
 
 import cv2
@@ -68,7 +74,7 @@ def verify():
     # 4. Evaluate Plumb-Line Curvature Variance (Straightness Metric)
     # Finding corners on heavily scaled/bordered images is very flaky.
     # We find the corners in the original image, mathematically undistort the points,
-    # and then calculate their straightness variance.
+    # And then calculate their straightness variance.
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret, corners = cv2.findChessboardCorners(
         gray,

@@ -1,3 +1,9 @@
+"""
+Module: stitching_bowl.py
+
+This module provides functionality related to stitching bowl.
+"""
+
 import os
 import sys
 
@@ -8,8 +14,8 @@ import numpy as np
 PIXELS_PER_METER = 100
 BEV_WIDTH = 1000  # 10m x 10m area
 BEV_HEIGHT = 1000
-X_RANGE = (-5.0, 5.0)  # meters
-Y_RANGE = (-5.0, 5.0)  # meters
+X_RANGE = (-5.0, 5.0)  # Meters
+Y_RANGE = (-5.0, 5.0)  # Meters
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 intrinsic_params_path = os.path.join(

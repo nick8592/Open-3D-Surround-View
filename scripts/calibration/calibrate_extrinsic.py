@@ -1,3 +1,9 @@
+"""
+Module: calibrate_extrinsic.py
+
+This module provides functionality related to calibrate extrinsic.
+"""
+
 import os
 import sys
 

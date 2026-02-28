@@ -1,3 +1,9 @@
+"""
+Module: capture_intrinsic.py
+
+This module provides functionality related to capture intrinsic.
+"""
+
 import math
 import os
 

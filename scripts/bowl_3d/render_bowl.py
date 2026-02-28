@@ -1,3 +1,9 @@
+"""
+Module: render_bowl.py
+
+This module provides functionality related to render bowl.
+"""
+
 import os
 import sys
 import time

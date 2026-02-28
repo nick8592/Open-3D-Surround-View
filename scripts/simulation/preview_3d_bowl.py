@@ -1,3 +1,9 @@
+"""
+Module: preview_3d_bowl.py
+
+This module provides functionality related to preview 3d bowl.
+"""
+
 import os
 
 import bpy

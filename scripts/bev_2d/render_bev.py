@@ -1,3 +1,9 @@
+"""
+Module: render_bev.py
+
+This module provides functionality related to render bev.
+"""
+
 import os
 import sys
 import time

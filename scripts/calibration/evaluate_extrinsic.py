@@ -1,3 +1,9 @@
+"""
+Module: evaluate_extrinsic.py
+
+This module provides functionality related to evaluate extrinsic.
+"""
+
 import os
 import sys
 
@@ -104,7 +110,7 @@ def verify_camera(cam):
     obj_pts, pattern_size = get_pad_3d_points(center[0], center[1], cam)
 
     # Reproject 3D points back to 2D image plane using Fisheye projectPoints
-    # cv2.fisheye.projectPoints uses 3D points, rvec, tvec, K, D and returns 2D pixel coordinates
+    # Cv2.fisheye.projectPoints uses 3D points, rvec, tvec, K, D and returns 2D pixel coordinates
     # Note: projectPoints input shape must be (N, 1, 3)
     obj_pts_reshaped = obj_pts.reshape(-1, 1, 3)
     img_pts_proj, _ = cv2.fisheye.projectPoints(obj_pts_reshaped, rvec, tvec, K, D)

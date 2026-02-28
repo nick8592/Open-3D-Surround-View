@@ -1,3 +1,9 @@
+"""
+Module: evaluate_bev.py
+
+This module provides functionality related to evaluate bev.
+"""
+
 import os
 import sys
 
