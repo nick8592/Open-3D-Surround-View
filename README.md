@@ -34,16 +34,16 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 │   │   ├── capture_intrinsic.py            # Renders chessboard images for intrinsic calibration
 │   │   ├── capture_extrinsic.py            # Captures images for extrinsic calibration
 │   │   └── preview_3d_bowl.py              # Opens Blender specifically to view Z-up generated meshes
-│   ├── rendering/
-│   │   ├── build_3d_bowl.py                # Constructs clean, mathematical 3D Bowl topology (`avm_pure_bowl.obj`)
-│   │   ├── stitching_3d_bowl.py            # Calculates exact physical Extrinsic physics for curved 3D walls
-│   │   └── render_3d_bowl.py               # Simulated Real-time ECU dashboard rendering engine (13+ FPS)
+│   ├── bowl_3d/
+│   │   ├── build_bowl.py                   # Constructs clean, mathematical 3D Bowl topology (`avm_pure_bowl.obj`)
+│   │   ├── stitching_bowl.py               # Calculates exact physical Extrinsic physics for curved 3D walls
+│   │   └── render_bowl.py                  # Simulated Real-time ECU dashboard rendering engine (13+ FPS)
 │   ├── calibration/
 │       ├── calibrate_intrinsic.py          # Calculates intrinsic K and D matrices
 │       ├── evaluate_intrinsic.py           # Evaluates undistortion using K and D and curvature variance
 │       ├── calibrate_extrinsic.py          # Calculates extrinsic rvec and tvec matrices
 │       └── evaluate_extrinsic.py           # Evaluates extrinsics via 3D reprojection error
-│   └── stitching/
+│   └── bev_2d/
 │       ├── stitching_bev.py                # Maps logical BEV and exports optimized map/weight LUTs
 │       ├── render_bev.py                   # Real-time simulation loop that loads LUTs to stitch LIVE frames
 │       └── evaluate_bev.py                 # Evaluates stitching alignment via photometric error
@@ -143,42 +143,42 @@ python3 scripts/calibration/evaluate_extrinsic.py
 Maps all 4 fisheye cameras onto a unified 3D physical ground plane to calculate rendering coordinates & alpha weights.
 Executes the heavy math exactly once, and stores the rulesets (`.npz` LUTs) to memory.
 ```bash
-python3 scripts/stitching/stitching_bev.py
+python3 scripts/bev_2d/stitching_bev.py
 ```
 *Outputs: Optimized `lut_{Cam}.npz` pre-calculated matrices inside `data/stitching/luts/`.*
 
 **Step 3.2: Simulate Real-Time BEV Rendering**
 Wraps the actual real-world loop. Loads the pre-computed Look-Up Tables into RAM, ingests live camera frames, and instantly maps/stitches the `Bird's-Eye View` composite simulating high FPS performance tracking.
 ```bash
-python3 scripts/stitching/render_bev.py
+python3 scripts/bev_2d/render_bev.py
 ```
 *Outputs: Evaluated python runtime metrics (e.g. `~14 FPS`) and the final `realtime_demo_bev.png`.*
 
 **Step 3.3: Evaluate Stitching Alignment**
 Mathematically crops and compares shared overlapping sightlines to quantify Extrinsic photometric error.
 ```bash
-python3 scripts/stitching/evaluate_bev.py
+python3 scripts/bev_2d/evaluate_bev.py
 ```
 *Outputs: MAE and RMSE error metrics per corner, and a colorized visual heatmap in `data/stitching/debug/`.*
 
 **Step 3.4: Generate Perfect 3D Bowl Geometry**
 Mathematically constructs a flawless Z-up Polar 3D Bowl topology based on ISO 8855 Coordinate constraints without Spider Leg stretching or Parallax ghosting.
 ```bash
-python3 scripts/rendering/build_3d_bowl.py
+python3 scripts/bowl_3d/build_bowl.py
 ```
 *Outputs: Clean pure mesh `avm_pure_bowl.obj` (with UV mappings) and `avm_pure_bowl.mtl`.*
 
 **Step 3.5: Calculate Extrinsic UV Mappings for the 3D Bowl**
 Reruns the rigorous 3D world physics engine. Unlike the flat 2D projection, it accounts for the actual curvature Z-Height to project physical wall textures flawlessly outwards into the fisheye cameras without severe stretching.
 ```bash
-python3 scripts/rendering/stitching_3d_bowl.py
+python3 scripts/bowl_3d/stitching_bowl.py
 ```
 *Outputs: Advanced alpha-blended UV arrays (`lut_bowl_{Cam}.npz`) and a `bowl_texture.png` preview.*
 
 **Step 3.6: Simulate Real-Time 3D ECU Rendering**
 Ingests the newly calculated 3D Extrinsic LUTs and spins up a high-performance vector rendering loop simulating the dashboard display.
 ```bash
-python3 scripts/rendering/render_3d_bowl.py
+python3 scripts/bowl_3d/render_bowl.py
 ```
 *Outputs: Simulated runtime metrics (~15 FPS natively in Python) and `realtime_demo_bowl.png`.*
 

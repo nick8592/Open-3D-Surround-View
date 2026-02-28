@@ -19,7 +19,7 @@ print("Loading pre-computed 3D Bowl Look-Up Tables (LUTs)...")
 for cam in cameras:
     lut_path = os.path.join(luts_dir, f"lut_bowl_{cam}.npz")
     if not os.path.exists(lut_path):
-        print(f"Error: Missing LUT for {cam}. Run stitching_3d_bowl.py first to generate them.")
+        print(f"Error: Missing LUT for {cam}. Run stitching_bowl.py first to generate them.")
         sys.exit(1)
         
     with np.load(lut_path) as data:

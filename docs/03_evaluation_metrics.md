@@ -1,6 +1,6 @@
 # AVM Evaluation Metrics (Proving Calibration Goodness)
 
-Because fisheye distortion and 3D space are hard to perfectly "eyeball," we designed three mathematical pillars inside our `/scripts/calibration` and `/scripts/stitching` codebase to categorically evaluate the *goodness* of the calibration.
+Because fisheye distortion and 3D space are hard to perfectly "eyeball," we designed three mathematical pillars inside our `/scripts/calibration` and `/scripts/bev_2d` codebase to categorically evaluate the *goodness* of the calibration.
 
 ## 1. Intrinsic Goodness: RMS Reprojection Error & Plumb-Line Curvature
 During the initial extraction of lens physics in `calibrate_intrinsic.py`, OpenCV runs an internal feedback loop. 
