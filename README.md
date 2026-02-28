@@ -28,7 +28,7 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 ├── docs/                                   # Theory, logic, and mathematics documentation
 │   ├── 01_camera_calibration.md
 │   ├── 02_bev_2d_mapping.md
-│   ├── 03_bowl_3d_mapping.md
+│   ├── 03_bowl_3d_projection.md
 │   └── 04_evaluation_metrics.md
 ├── scripts/
 │   ├── simulation/
@@ -54,18 +54,23 @@ Euler angles (Yaw, Pitch, Roll) extracted from `calibrate_extrinsic.py` are nati
 ├── data/ (Git ignored)
 │   ├── calibration/
 │   │   ├── intrinsic/
-│   │   │   ├── images/                         # Input images for intrinsic calibration
-│   │   │   ├── debug/                          # Debug visualizations (corners, undistort)
-│   │   │   └── params/                         # Final K and D parameters
+│   │   │   ├── images/                     # Input images for intrinsic calibration
+│   │   │   ├── debug/                      # Debug visualizations (corners, plumb-lines)
+│   │   │   └── params/                     # Final K and D matrices (.npz)
 │   │   └── extrinsic/
-│   │       ├── images/                         # Input images for extrinsic calibration
-│   │       ├── debug/                          # Debug visualizations (corners, overlays)
-│   │       └── params/                         # Final rvec and tvec parameters
-│   └── outputs/
-│       └── surround_view/                  # Final AVM simulated renders
-│   └── stitching/
-│       ├── debug/                          # Intermediate BEV projections and evaluation heatmaps
-│       └── bev.png                         # Final stitched Bird's Eye View output
+│   │       ├── images/                     # Input images from the 4 fisheye cameras
+│   │       ├── debug/                      # Visual reprojection error overlays
+│   │       └── params/                     # Final ZYX rot and trans matrices (.npz)
+│   ├── bev_2d/
+│   │   ├── debug/                          # Photometric error heatmaps
+│   │   ├── luts/                           # Production Look-Up Tables for real-time BEV mapping
+│   │   ├── bev.png                         # Perfect high-res stitched 2D ground plane
+│   │   └── realtime_demo_bev.png           # Simulated 2D dashboard UX output
+│   └── bowl_3d/
+│       ├── luts/                           # Physical Extrinsic LUTs for 3D topology projection
+│       ├── avm_pure_bowl.obj               # Mathematically pure 3D Bowl Mesh (Polar coordinates)
+│       ├── bowl_texture.png                # Distorted 2D mapped texture array (for 3D blending)
+│       └── realtime_demo_bowl.png          # Real-time rendered 3D ECU dashboard UI
 └── README.md
 ```
 
@@ -77,14 +82,14 @@ For developers seeking to understand the background physics, mathematical models
 
 1. [Calibration Theory & Coordinate Systems](docs/01_camera_calibration.md): Explains ISO 8855 standard geometry, fisheye intrinsic mathematical formulation, and extrinsic point-matching physics.
 2. [2D BEV Mapping & Look-Up Tables (LUT)](docs/02_bev_2d_mapping.md): Details the reverse-projection math from the flat Z=0 ground plane and the hardware-accelerated Extrinsic LUT optimizations used for real-time dashboard ECU operation.
-3. [3D Bowl Projection Architecture](docs/03_bowl_3d_mapping.md): Mathematically details the industry transition from flat representations to curved 3D topology (Z > 0 walls) to solve Spider-Leg corner stretching and Parallax flat-mat ghosting.
+3. [3D Bowl Projection Architecture](docs/03_bowl_3d_projection.md): Mathematically details the industry transition from flat representations to curved 3D topology (Z > 0 walls) to solve Spider-Leg corner stretching and Parallax flat-mat ghosting.
 4. [Evaluation Metrics & Precision](docs/04_evaluation_metrics.md): Breaks down the "Holy Trinity" of calibration proofs including Plumb-Line Curvature, Extrinsic Sub-Pixel Reprojection, and overlapping Photometric Area tracking.
 
 ---
 
 ## 🚀 Workflow
 
-The AVM pipeline is structurally split into 3 logical phases: **Lens Calibration (Intrinsic)**, **Robot Assembly (Extrinsic)**, and **Surround View Simulation (Stitching)**.
+The AVM pipeline is structurally split into 4 logical phases: **Lens Calibration (Intrinsic)**, **Cameras Assembly (Extrinsic)**, **2D BEV Mapping**, and **3D Bowl Projection**.
 
 ---
 
@@ -162,6 +167,8 @@ Mathematically crops and compares shared overlapping sightlines to quantify Extr
 python3 scripts/bev_2d/evaluate_bev.py
 ```
 *Outputs: MAE and RMSE error metrics per corner, and a colorized visual heatmap in `data/bev_2d/debug/`.*
+
+---
 
 ### Phase 4: 3D Bowl Projection & Extrusion
 *Elevating the flat math into a 3D topology to eliminate stretching and parallax ghosting.*
