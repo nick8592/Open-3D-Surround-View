@@ -19,8 +19,12 @@ python3 demo/demo.py
 ## 3. Demo Output
 
 ### End-to-End Visual Pipeline
-*(Original Fisheye Feeds → 2D BEV Calibration → 3D Extruded Bowl)*
+*(Original Fisheye Feeds → 2D BEV → 3D AVM)*
 ![Pipeline Animation](docs/images/animation.gif)
+
+### Cinematic 3D Turntable Render
+*(The optional `render_cinematic.py` script exports a dynamic flying camera video of the 3D topology)*
+<video src="https://github.com/user-attachments/assets/35f90aa1-d96d-47a8-9ade-5cfca9fb7e03" controls="controls" muted="muted" style="max-height:640px;"></video>
 
 ### Comparison (Raw vs Generated Views)
 ![Comparison Output](docs/images/comparison.png)
@@ -77,14 +81,29 @@ Uses the 3D LUTs to render the final unified dashboard display!
 python3 scripts/bowl_3d/render_bowl.py
 ```
 
-## 6. Calibration Guide
+## 6. Blender Rendering & Previews (Optional)
+Once you have generated the 3D bowl topology (`avm_pure_bowl.obj`) and matching texture (`bowl_texture.png`), you can use these Blender scripts to visually examine or showcase your results.
+
+### Preview 3D Bowl Geometry
+Opens the Blender GUI with the generated OBJ and textures automatically loaded, enforcing proper ISO 8855 Automotive axes. Useful for debugging your bowl topology structure.
+```bash
+blender -P scripts/blender_render/preview_3d_bowl.py
+```
+
+### Render Cinematic Turntable Animation
+Executes a simulated "flying chase camera" spin around the 3D Bowl layout in headless mode and exports an MP4 cinematic video.
+```bash
+blender -b -P scripts/blender_render/render_cinematic.py
+```
+
+## 7. Calibration Guide
 If you want to re-calibrate the cameras or change their physical locations on the car, you must generate new `K`, `D`, `rvec`, and `tvec` matrices.
 
 ### Intrinsic Calibration (Lens Distortion)
 Computes the internal properties of the fisheye lens (`K` and `D`).
 ```bash
 # 1. Synthetically capture checkerboards using Blender
-blender -b scenes/calib_intrinsic.blend -P scripts/simulation/capture_intrinsic.py
+blender -b scenes/calib_intrinsic.blend -P scripts/synthetic_capture/capture_intrinsic.py
 
 # 2. Run OpenCV mathematical solver
 python3 scripts/calibration/calibrate_intrinsic.py
@@ -97,7 +116,7 @@ python3 scripts/calibration/evaluate_intrinsic.py
 Computes the physical (X, Y, Z, Yaw, Pitch, Roll) orientation of the cameras mapped to the ISO 8855 automotive standard.
 ```bash
 # 1. Capture the 4 cameras looking at the floor checkerboards
-blender -b scenes/avm_v1.blend -P scripts/simulation/capture_extrinsic.py
+blender -b scenes/avm_v1.blend -P scripts/synthetic_capture/capture_extrinsic.py
 
 # 2. Run OpenCV mathematical solver 
 python3 scripts/calibration/calibrate_extrinsic.py
@@ -106,7 +125,7 @@ python3 scripts/calibration/calibrate_extrinsic.py
 python3 scripts/calibration/evaluate_extrinsic.py
 ```
 
-## 7. Advanced Usage
+## 8. Advanced Usage
 
 ### Centralized Configuration (`config.py`)
 If you change the physical size of the vehicle, or want to tweak the projection curves and masking, open the `config.py` file in the root directory and adjust the centralized parameters. All rendering scripts will automatically read from this single source of truth:
