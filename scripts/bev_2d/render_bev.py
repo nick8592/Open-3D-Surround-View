@@ -29,7 +29,7 @@ images_dir = os.path.join(base_dir, "data/calibration/extrinsic/images")
 cameras = ["Cam_Front", "Cam_Left", "Cam_Back", "Cam_Right"]
 luts = {}
 
-print("Loading pre-computed AVM Look-Up Tables (LUTs)...")
+print("Loading pre-computed SVM Look-Up Tables (LUTs)...")
 for cam in cameras:
     lut_path = os.path.join(luts_dir, f"lut_{cam}.npz")
     if not os.path.exists(lut_path):
@@ -120,7 +120,7 @@ for i in range(NUM_FRAMES):
 end_time = time.time()
 fps = NUM_FRAMES / (end_time - start_time)
 
-print(f"Processed 4x Camera inputs to composite 1000x1000px AVM output.")
+print(f"Processed 4x Camera inputs to composite 1000x1000px SVM output.")
 print(f"Performance: {fps:.2f} Frames Per Second (FPS) in Python")
 
 output_path = os.path.join(base_dir, "data/bev_2d/realtime_demo_bev.png")

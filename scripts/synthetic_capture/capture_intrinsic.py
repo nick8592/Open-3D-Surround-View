@@ -25,7 +25,7 @@ def main():
 
     # Try to find a suitable camera
     # 1. Search for "Camera"
-    # 2. Search for "Cam_Front" (common in AVM)
+    # 2. Search for "Cam_Front" (common in SVM)
     # 3. Fallback to the first available camera
     cam = bpy.data.objects.get("Camera")
     if not cam:

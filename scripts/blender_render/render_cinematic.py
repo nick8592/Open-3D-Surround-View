@@ -4,7 +4,7 @@ import math
 
 # Paths
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-obj_path = os.path.join(base_dir, "data/bowl_3d/avm_pure_bowl.obj")
+obj_path = os.path.join(base_dir, "data/bowl_3d/svm_pure_bowl.obj")
 texture_path = os.path.join(base_dir, "data/bowl_3d/bowl_texture.png")
 output_path = os.path.join(base_dir, "data/bowl_3d/cinematic_demo.mp4")
 
@@ -19,7 +19,7 @@ bpy.ops.import_scene.obj(filepath=obj_path, axis_forward='X', axis_up='Z')
 # Select the imported bowl
 bowl_obj = None
 for obj in bpy.context.scene.objects:
-    if "avm_pure_bowl" in obj.name or "AVM_Pure_Bowl" in obj.name:
+    if "svm_pure_bowl" in obj.name or "SVM_Pure_Bowl" in obj.name:
         bowl_obj = obj
         break
 

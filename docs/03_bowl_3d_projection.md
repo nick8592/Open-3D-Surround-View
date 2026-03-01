@@ -1,6 +1,6 @@
 # 4. 3D Bowl Projection Architecture (Evolution from 2D BEV)
 
-Transitioning an Automotive Surround-View Monitor (AVM) from a 2D plane to a 3D Bowl structure is a critical engineering leap meant to solve both geometrical distortion and runtime mapping efficiency. This document breaks down the mathematical limitations of 2D BEV, the logic behind designing a 3D Bowl topology, and how it handles real-world physical anomalies.
+Transitioning an Automotive Surround-View Monitor (SVM) from a 2D plane to a 3D Bowl structure is a critical engineering leap meant to solve both geometrical distortion and runtime mapping efficiency. This document breaks down the mathematical limitations of 2D BEV, the logic behind designing a 3D Bowl topology, and how it handles real-world physical anomalies.
 
 ---
 
@@ -13,7 +13,7 @@ When the system calculates which pixel to extract from the fisheye cameras, it e
 ---
 
 ## 4.2 The 3D Bowl Concept
-A modern "3D AVM" solves this by extruding the ground mesh into a shape resembling a bowl:
+A modern "3D SVM" solves this by extruding the ground mesh into a shape resembling a bowl:
 1. **The Ground/Pads Area (Flat Center):** The central area of the mesh directly beneath the car remains a flat projection ($Z=0$). This strict requirement preserves the exact shapes of road lane markings and ground padding without distortion.
 2. **The Walls (Curved Periphery):** Beyond a safe margin of the vehicle, the Z-coordinates of the mesh smoothly curve upward in a parabolic or spherical trajectory $Z = C \cdot (R - Margin)^2$. By projecting distant textures onto an elevated physical wall, standing objects retain their height naturally and the stretching symptom disappears.
 
@@ -25,7 +25,7 @@ In our codebase (`scripts/bowl_3d/build_bowl.py`), we implement specific logic t
 
 ### 1. Parallax Ghosting (The Rounded-Rectangle Solution)
 **Symptom:** Ghosting or "Double Vision" appears on the ground mapping.
-**Cause:** If the "Flat Area" is a perfect circle with radius $R$, it may accidentally begin curling upwards "underneath" the corners of the long rectangular car box. Real-world physics insists those spots are $Z=0$, but the AVM mapping attempts to map them at $Z>0$. Because of the multiple camera perspectives, the math produces conflicting intersections.
+**Cause:** If the "Flat Area" is a perfect circle with radius $R$, it may accidentally begin curling upwards "underneath" the corners of the long rectangular car box. Real-world physics insists those spots are $Z=0$, but the SVM mapping attempts to map them at $Z>0$. Because of the multiple camera perspectives, the math produces conflicting intersections.
 **Solution:** We construct a **Rounded-Rectangle Footprint**. The flat Z=0 zone perfectly matches the bounding box of the vehicle, meaning all ground textures directly around the four sides of the car's body will never suffer Parallax Ghosting.
 
 ### 2. The "Spider Leg / Crown" Artifact (Polar Culling)

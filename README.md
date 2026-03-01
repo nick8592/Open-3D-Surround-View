@@ -1,7 +1,7 @@
 # Open-3D-Surround-View
 
 ## What is this?
-This repository contains a complete, end-to-end Python pipeline for generating **Automated Fisheye Camera Calibration** and simulating a **Surround-View Monitor (AVM)** system.
+This repository contains a complete, end-to-end Python pipeline for generating **Automated Fisheye Camera Calibration** and simulating a **Surround-View Monitor (SVM)** system.
 
 Instead of just showing the mathematics, this repository gives you the actual tools to run a synthetic car through an advanced visualization engine. It takes input from 4 fisheye cameras (Front, Back, Left, Right), maps them perfectly to a physical ground plane (2D Bird's-Eye View), and even extrudes them onto a curved topology (3D Bowl View) for a complete parking dashboard UX.
 
@@ -19,7 +19,7 @@ python3 demo/demo.py
 ## Demo Output
 
 ### End-to-End Visual Pipeline
-*(Original Fisheye Feeds → 2D BEV → 3D AVM)*
+*(Original Fisheye Feeds → 2D BEV → 3D SVM)*
 ![Pipeline Animation](docs/images/animation.gif)
 
 ### Cinematic 3D Turntable Render
@@ -50,7 +50,7 @@ Simply open the repository folder in VS Code and click **Reopen in Container** w
 docker build -t open3dsv .
 docker run -it -v $(pwd):/app open3dsv
 ```
-*(Or use `docker compose run --rm avm_container bash`). Everything generated inside the container will automatically sync to your host machine!*
+*(Or use `docker compose run --rm svm_container bash`). Everything generated inside the container will automatically sync to your host machine!*
 
 ## Full Pipeline Usage
 If you want to run the core stitching and projection engine on existing calibrated parameters, follow this sequence:
@@ -84,7 +84,7 @@ python3 scripts/bowl_3d/render_bowl.py
 *(Performance on Apple Silicon (VirtualApple @ 2.50GHz): ~42 FPS)*
 
 ## Blender Rendering & Previews (Optional)
-Once you have generated the 3D bowl topology (`avm_pure_bowl.obj`) and matching texture (`bowl_texture.png`), you can use these Blender scripts to visually examine or showcase your results.
+Once you have generated the 3D bowl topology (`svm_pure_bowl.obj`) and matching texture (`bowl_texture.png`), you can use these Blender scripts to visually examine or showcase your results.
 
 ### Preview 3D Bowl Geometry
 Opens the Blender GUI with the generated OBJ and textures automatically loaded, enforcing proper ISO 8855 Automotive axes. Useful for debugging your bowl topology structure.
@@ -118,7 +118,7 @@ python3 scripts/calibration/evaluate_intrinsic.py
 Computes the physical (X, Y, Z, Yaw, Pitch, Roll) orientation of the cameras mapped to the ISO 8855 automotive standard.
 ```bash
 # 1. Capture the 4 cameras looking at the floor checkerboards
-blender -b scenes/avm_v1.blend -P scripts/synthetic_capture/capture_extrinsic.py
+blender -b scenes/svm_v1.blend -P scripts/synthetic_capture/capture_extrinsic.py
 
 # 2. Run OpenCV mathematical solver 
 python3 scripts/calibration/calibrate_extrinsic.py

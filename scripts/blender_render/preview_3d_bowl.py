@@ -14,7 +14,7 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 # Set absolute path for the generated 3D model
 script_dir = os.path.dirname(os.path.abspath(__file__))
 base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
-obj_path = os.path.join(base_dir, "data/bowl_3d/avm_pure_bowl.obj")
+obj_path = os.path.join(base_dir, "data/bowl_3d/svm_pure_bowl.obj")
 
 # Import OBJ (Automatically loads MTL and Textures)
 # CRITICAL: Blender's OBJ Importer defaults to Y-Up (like Maya), meaning it will automatically rotate Z-Up files 90 degrees!

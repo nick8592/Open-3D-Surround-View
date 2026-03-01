@@ -4,7 +4,7 @@ Module: demo.py
 Zero Friction Onboarding - Open-3D-Surround-View
 Instantly generates a 2D BEV and a 3D Bowl render using the `data/sample/` dataset.
 This script skips the calibration process by injecting the pre-calculated sample K/D and R/T matrices,
-and runs the core AVM engine to rapidly produce outputs.
+and runs the core SVM engine to rapidly produce outputs.
 """
 
 import os
@@ -52,7 +52,7 @@ for simple_name, full_name in cams.items():
     extr_npz_path = os.path.join(extr_dir, f"extrinsic_{full_name}.npz")
     rvec = np.array([calib["extrinsic"][simple_name]["rvec"]], dtype=np.float64).reshape(3, 1)
     tvec = np.array([calib["extrinsic"][simple_name]["tvec"]], dtype=np.float64).reshape(3, 1)
-    # The AVM expects Eulerian R_matrix or pure rvec
+    # The SVM expects Eulerian R_matrix or pure rvec
     # We save exactly what the pipeline requires
     np.savez_compressed(extr_npz_path, rvec=rvec, tvec=tvec)
     
@@ -75,7 +75,7 @@ def run_script(script_path, interpreter="python3", extra_args=None):
     if result.returncode != 0:
         raise RuntimeError(f"Failed to run {script_path}:\n{result.stderr}")
 
-print("\nInjecting data into AVM engine...\n")
+print("\nInjecting data into SVM engine...\n")
 
 # Run 2D BEV Pipeline
 run_script("scripts/bev_2d/stitching_bev.py")

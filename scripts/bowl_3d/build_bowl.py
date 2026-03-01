@@ -12,7 +12,7 @@ output_dir = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../data/bowl_3d")
 )
 os.makedirs(output_dir, exist_ok=True)
-obj_path = os.path.join(output_dir, "avm_pure_bowl.obj")
+obj_path = os.path.join(output_dir, "svm_pure_bowl.obj")
 
 # ==========================================
 # 3D Bowl Geometry Parameters
@@ -58,7 +58,7 @@ for r_idx in range(1, NUM_RINGS + 1):
 
         vertices.append((x, y, z))
 
-        # Calculate UV mapping strictly bound to our 10x10m 2D AVM rendering coordinates (Z=0 equivalent projection)
+        # Calculate UV mapping strictly bound to our 10x10m 2D SVM rendering coordinates (Z=0 equivalent projection)
         # Because we used `Y = 5.0 - (u/100)`, U texture coord is exactly `(5.0 - Y) / 10.0`
         u_coord = (5.0 - y) / 10.0
         # Because we used `X = 5.0 - (v/100)`, image V is `(5.0 - X)/10.0`. OBJ V reverses direction -> `(5.0 + x) / 10.0`
@@ -68,7 +68,7 @@ for r_idx in range(1, NUM_RINGS + 1):
 print(f"Generated {len(vertices)} precise vertices with UV metrics.")
 
 # Export Material MTL file
-mtl_path = os.path.join(output_dir, "avm_pure_bowl.mtl")
+mtl_path = os.path.join(output_dir, "svm_pure_bowl.mtl")
 with open(mtl_path, "w") as f:
     f.write("newmtl BowlTexture\n")
     f.write("Ka 1.000000 1.000000 1.000000\n")
@@ -77,8 +77,8 @@ with open(mtl_path, "w") as f:
 
 # Export to Wavefront .OBJ
 with open(obj_path, "w") as f:
-    f.write("mtllib avm_pure_bowl.mtl\n")
-    f.write("o AVM_Pure_Bowl\n")
+    f.write("mtllib svm_pure_bowl.mtl\n")
+    f.write("o SVM_Pure_Bowl\n")
 
     # 1. Write all vertices
     for v in vertices:

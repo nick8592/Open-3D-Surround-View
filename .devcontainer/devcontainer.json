@@ -1,5 +1,5 @@
 {
-    "name": "AVM_Dev_Env",
+    "name": "SVM_Dev_Env",
     "build": {
         "dockerfile": "../Dockerfile",
         "context": ".."

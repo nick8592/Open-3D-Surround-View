@@ -5,7 +5,7 @@ Central configuration file for Open-3D-Surround-View.
 Adjust these parameters to change the dimensions, resolution, or projection curves of your vehicle.
 """
 
-# AVM Resolution and Scale
+# SVM Resolution and Scale
 PIXELS_PER_METER = 100
 BEV_WIDTH = 1000  # 10m x 10m area
 BEV_HEIGHT = 1000

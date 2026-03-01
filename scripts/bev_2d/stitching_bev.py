@@ -66,7 +66,7 @@ blend_weights = np.zeros((BEV_HEIGHT, BEV_WIDTH), dtype=np.float32)
 
 camera_maps = {}  # Dictionary to store data for LUTs
 
-print("\nProcessing cameras for AVM stitching:")
+print("\nProcessing cameras for SVM stitching:")
 for cam in cameras:
     ext_path = os.path.join(extrinsic_dir, f"extrinsic_{cam}.npz")
     img_path = os.path.join(images_dir, f"{cam}.png")

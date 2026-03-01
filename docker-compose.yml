@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  avm_container:
+  svm_container:
     build:
       context: .
       dockerfile: Dockerfile

@@ -1,4 +1,4 @@
-# AVM Calibration Theory & Coordinate Systems
+# SVM Calibration Theory & Coordinate Systems
 
 ## 1. The Automotive Coordinate System (ISO 8855)
 When dealing with multi-camera systems on a physical vehicle, the most important foundational step is establishing a universal "World Origin". This project strictly adheres to the **ISO 8855** standard:

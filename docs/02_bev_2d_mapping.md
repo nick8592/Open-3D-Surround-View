@@ -1,4 +1,4 @@
-# AVM Stitching & Look-Up Tables (LUT)
+# SVM Stitching & Look-Up Tables (LUT)
 
 ## 1. The Bird's-Eye View Geometry (Z=0 Plane)
 The fundamental concept of any Surround-View Monitor is the **Ground Plane Assumption**. Since the driver wants to see the surrounding parking space (the ground), the system mathematically creates a flat virtual grid exactly at `Z=0` in the ISO 8855 World Coordinate System.
@@ -6,7 +6,7 @@ The fundamental concept of any Surround-View Monitor is the **Ground Plane Assum
 In `stitching_bev.py`, we define a virtual camera looking straight down at this 2D grid covering a 10m x 10m physical area (X: -5m to +5m, Y: -5m to +5m). Because we assume the ground is flat (`Z=0`), any object that is physically *taller* than the ground (like a wall, a pole, or another car bumper) will mathematically stretch outward radially from the cameras.
 
 ## 2. Reverse Projection (World-to-Image Mapping)
-A common mistake in AVM design is looping over the camera's image pixels and trying to guess where they land on the ground. Because fisheye lenses bend heavily, this "Forward Mapping" approach creates holes and broken pixels in the final image.
+A common mistake in SVM design is looping over the camera's image pixels and trying to guess where they land on the ground. Because fisheye lenses bend heavily, this "Forward Mapping" approach creates holes and broken pixels in the final image.
 
 Instead, we use **Reverse Projection Mapping**:
 1. We iterate over every single virtual 3D point on the BEV ground plane grid (`X, Y, Z=0`).

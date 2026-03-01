@@ -12,8 +12,8 @@ This document provides a detailed overview of the mathematical, rendering, and l
 │   │   └── realtime_demo_bev.png           # Simulated 2D dashboard UX output (Flat Plane)
 │   ├── bowl_3d/
 │   │   ├── luts/                           # Physical Extrinsic LUTs for curved 3D topology projection
-│   │   ├── avm_pure_bowl.obj               # Mathematically pure 3D Bowl Mesh (.obj)
-│   │   ├── avm_pure_bowl.mtl               # MTL shader coordinates mapping to UV values
+│   │   ├── svm_pure_bowl.obj               # Mathematically pure 3D Bowl Mesh (.obj)
+│   │   ├── svm_pure_bowl.mtl               # MTL shader coordinates mapping to UV values
 │   │   ├── bowl_texture.png                # Distorted 2D mapped texture array (wrapped over 3D model)
 │   │   └── realtime_demo_bowl.png          # Simulated Real-time ECU dashboard 3D UI
 │   ├── calibration/
@@ -34,7 +34,7 @@ This document provides a detailed overview of the mathematical, rendering, and l
 │   ├── images/                             # Contains preview/demo output imagery injected into the README
 │   └── DIRECTORY_STRUCTURE.md              # This file
 ├── scenes/                                 # 3D Topology Assets
-│   ├── avm_v1.blend                        # Core vehicle mounting & camera rig Blender scene
+│   ├── svm_v1.blend                        # Core vehicle mounting & camera rig Blender scene
 │   └── calib_intrinsic.blend               # Synthetic room used exclusively to capture 15 checking angles
 ├── scripts/                                # Mathematics and Physics Source Code
 │   ├── bev_2d/
@@ -54,7 +54,7 @@ This document provides a detailed overview of the mathematical, rendering, and l
 │   │   ├── evaluate_extrinsic.py           # Projects perfect mathematical coordinates backward onto images to generate Reprojection MAE parameters
 │   │   └── evaluate_intrinsic.py           # Validates lens un-distortion formulas analyzing curve-corrected straight-line metrics
 │   ├── synthetic_capture/
-│   │   ├── capture_extrinsic.py            # Automated control script manipulating Blender to fire static cameras in AVM frame
+│   │   ├── capture_extrinsic.py            # Automated control script manipulating Blender to fire static cameras in SVM frame
 │   │   └── capture_intrinsic.py            # Automated sweep rendering multi-angle testing environments for lens detection
 │   └── utils/
 │       └── generate_visuals.py             # Internal helper script to automatically generate dynamic README comparison images and animations

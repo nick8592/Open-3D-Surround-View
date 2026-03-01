@@ -1,4 +1,4 @@
-# AVM Evaluation Metrics (Proving Calibration Goodness)
+# SVM Evaluation Metrics (Proving Calibration Goodness)
 
 Because fisheye distortion and 3D space are hard to perfectly "eyeball," we designed three mathematical pillars inside our `/scripts/calibration` and `/scripts/bev_2d` codebase to categorically evaluate the *goodness* of the calibration.
 

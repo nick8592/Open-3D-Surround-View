@@ -18,9 +18,9 @@ def main():
         base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
     # Auto-adapt path: use base_dir/scenes or fall back to /workspace/scenes
-    scene_path = os.path.join(base_dir, "scenes", "avm_v1.blend")
+    scene_path = os.path.join(base_dir, "scenes", "svm_v1.blend")
     if not os.path.exists(scene_path):
-        scene_path = "/workspace/scenes/avm_v1.blend"
+        scene_path = "/workspace/scenes/svm_v1.blend"
 
     output_dir = os.path.join(base_dir, "data", "calibration", "extrinsic", "images")
     os.makedirs(output_dir, exist_ok=True)
