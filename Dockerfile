@@ -1,5 +1,5 @@
-# Use Ubuntu 22.04 as base
-FROM ubuntu:22.04
+# Use Ubuntu 22.04 as base (Force AMD64 so Rosetta 2 cleanly emulates Blender 3.6 x64 on Mac Silicon)
+FROM --platform=linux/amd64 ubuntu:22.04
 
 # Avoid interactive prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -25,17 +25,12 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. Install Blender (LTS 3.6)
-# Dynamically fetch the correct architecture (linux-x64 or linux-arm64) to support M-Series Macs and traditional PCs natively.
-RUN ARCH=$(uname -m) && \
-    if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then \
-        B_ARCH="linux-arm64"; \
-    else \
-        B_ARCH="linux-x64"; \
-    fi && \
-    wget https://download.blender.org/release/Blender3.6/blender-3.6.5-${B_ARCH}.tar.xz && \
-    tar -xvf blender-3.6.5-${B_ARCH}.tar.xz -C /opt/ && \
-    ln -s /opt/blender-3.6.5-${B_ARCH}/blender /usr/local/bin/blender && \
-    rm blender-3.6.5-${B_ARCH}.tar.xz
+# Official Linux ARM64 binaries for Blender 3.6 do not exist.
+# By forcing the container to `--platform=linux/amd64`, Docker on Mac M-Series will use Rosetta 2 to flawlessly simulate this x64 installation.
+RUN wget https://download.blender.org/release/Blender3.6/blender-3.6.5-linux-x64.tar.xz \
+    && tar -xvf blender-3.6.5-linux-x64.tar.xz -C /opt/ \
+    && ln -s /opt/blender-3.6.5-linux-x64/blender /usr/local/bin/blender \
+    && rm blender-3.6.5-linux-x64.tar.xz
 
 # 3. Upgrade pip and install critical Python libraries
 # Warning: NumPy 2.x introduces C-API breaking changes with many pre-compiled CV packages. Strictly capping <2.
