@@ -28,7 +28,7 @@ python3 demo/demo.py
 If you want to run the entire Phase 1-4 calibration & math codebase without dependency conflicts (Blender 3.6 LTS + OpenCV + NumPy included):
 ```bash
 docker build -t open3dsv .
-docker run -it -v $(pwd):/workspace/AVM open3dsv
+docker run -it -v $(pwd):/app open3dsv
 ```
 *(Alternatively, just run `docker compose run --rm avm_container bash`). The container automatically mounts your host directory, meaning any `.png` heatmaps or `.obj` 3D bowls generated inside Docker will immediately appear on your Mac/Windows host for easy viewing!*
 

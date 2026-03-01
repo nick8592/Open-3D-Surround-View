@@ -42,7 +42,8 @@ RUN pip3 install \
     fake-bpy-module-3.6 \
     matplotlib \
     black \
-    isort
+    isort \
+    pyyaml
 
 # 4. Set environment variables
 ENV PYTHONPATH=/usr/lib/python3/dist-packages
@@ -50,8 +51,8 @@ ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
 # 5. Copy the Open-3D-Surround-View repository into the image
-WORKDIR /workspace/open3dsv
-COPY . /workspace/open3dsv
+WORKDIR /app
+COPY . /app
 
 # Pre-run black/isort formatting checks to ensure code integrity
 RUN black --check scripts/ || true

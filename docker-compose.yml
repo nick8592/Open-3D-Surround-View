@@ -13,5 +13,5 @@ services:
     # Map the current working directory to the container workspace
     # so outputs like generated videos/pngs/objs show up natively on host machine
     volumes:
-      - .:/workspace/open3dsv
-    working_dir: /workspace/open3dsv
+      - .:/app
+    working_dir: /app
