@@ -14,6 +14,8 @@ import numpy as np
 PIXELS_PER_METER = 100
 BEV_WIDTH = 1000
 BEV_HEIGHT = 1000
+CAR_LENGTH = 4.8
+CAR_WIDTH = 1.9
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 luts_dir = os.path.join(base_dir, "data/bev_2d/luts")
@@ -56,10 +58,10 @@ for cam in cameras:
 # Pre-draw the Car Icon overlay
 def create_car_overlay():
     overlay = np.zeros((BEV_HEIGHT, BEV_WIDTH, 3), dtype=np.uint8)
-    car_top = int(BEV_HEIGHT / 2 - 2.4 * PIXELS_PER_METER)
-    car_bot = int(BEV_HEIGHT / 2 + 2.4 * PIXELS_PER_METER)
-    car_left = int(BEV_WIDTH / 2 - 0.95 * PIXELS_PER_METER)
-    car_right = int(BEV_WIDTH / 2 + 0.95 * PIXELS_PER_METER)
+    car_top = int(BEV_HEIGHT / 2 - (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+    car_bot = int(BEV_HEIGHT / 2 + (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+    car_left = int(BEV_WIDTH / 2 - (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
+    car_right = int(BEV_WIDTH / 2 + (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
 
     cv2.rectangle(overlay, (car_left, car_top), (car_right, car_bot), (30, 30, 30), -1)
     cv2.rectangle(

@@ -16,6 +16,8 @@ BEV_WIDTH = 1000
 BEV_HEIGHT = 1000
 X_RANGE = (-5.0, 5.0)
 Y_RANGE = (-5.0, 5.0)
+CAR_LENGTH = 4.8
+CAR_WIDTH = 1.9
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 intrinsic_params_path = os.path.join(
@@ -84,7 +86,7 @@ for cam in cameras:
         & (map_y >= 0)
         & (map_y < img_h - 1)
     )
-    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.95) & (Y < 0.95)
+    car_mask = (X > -CAR_LENGTH / 2.0) & (X < CAR_LENGTH / 2.0) & (Y > -CAR_WIDTH / 2.0) & (Y < CAR_WIDTH / 2.0)
     valid_mask = valid_mask & (~car_mask)
 
     camera_data[cam] = {

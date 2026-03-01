@@ -16,6 +16,8 @@ BEV_WIDTH = 1000  # 10m x 10m area
 BEV_HEIGHT = 1000
 X_RANGE = (-5.0, 5.0)  # Meters
 Y_RANGE = (-5.0, 5.0)  # Meters
+CAR_LENGTH = 4.8
+CAR_WIDTH = 1.9
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 intrinsic_params_path = os.path.join(
@@ -121,7 +123,7 @@ for cam in cameras:
     weight = np.clip(1.0 - (radial_dist ** 2), 0.0, 1.0)
 
     valid_mask = z_mask & valid_x & valid_y
-    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.95) & (Y < 0.95)
+    car_mask = (X > -CAR_LENGTH / 2.0) & (X < CAR_LENGTH / 2.0) & (Y > -CAR_WIDTH / 2.0) & (Y < CAR_WIDTH / 2.0)
     valid_mask = valid_mask & (~car_mask)
 
     weight = weight * valid_mask.astype(np.float32)
@@ -156,10 +158,10 @@ for cam, maps in camera_maps.items():
     print(f"  Saved 3D Bowl LUT -> {lut_path}")
 
 # Central Car Icon
-car_top = int(BEV_HEIGHT / 2 - 2.4 * PIXELS_PER_METER)
-car_bot = int(BEV_HEIGHT / 2 + 2.4 * PIXELS_PER_METER)
-car_left = int(BEV_WIDTH / 2 - 0.95 * PIXELS_PER_METER)
-car_right = int(BEV_WIDTH / 2 + 0.95 * PIXELS_PER_METER)
+car_top = int(BEV_HEIGHT / 2 - (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+car_bot = int(BEV_HEIGHT / 2 + (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+car_left = int(BEV_WIDTH / 2 - (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
+car_right = int(BEV_WIDTH / 2 + (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
 
 cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (30, 30, 30), -1)
 cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (255, 255, 255), 3)

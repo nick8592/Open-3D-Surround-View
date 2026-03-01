@@ -16,6 +16,8 @@ BEV_WIDTH = 1000  # 10m x 10m area
 BEV_HEIGHT = 1000
 X_RANGE = (-5.0, 5.0)  # Meters (from bottom to top of image)
 Y_RANGE = (-5.0, 5.0)  # Meters (from right to left of image)
+CAR_LENGTH = 4.8
+CAR_WIDTH = 1.9
 
 # Paths
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
@@ -126,7 +128,7 @@ for cam in cameras:
     # Enforce boolean exclusions
     valid_mask = z_mask & valid_x & valid_y
     # Remove pixels that mapped inside the literal car bounding box footprint
-    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.95) & (Y < 0.95)
+    car_mask = (X > -CAR_LENGTH / 2.0) & (X < CAR_LENGTH / 2.0) & (Y > -CAR_WIDTH / 2.0) & (Y < CAR_WIDTH / 2.0)
     valid_mask = valid_mask & (~car_mask)
 
     weight = weight * valid_mask.astype(np.float32)
@@ -208,12 +210,11 @@ for cam, maps in camera_maps.items():
     )
     print(f"  Saved LUT -> {lut_path}")
 
-# 6. Render the Central Car Icon properly oriented
-# Vehicle is 4.8m long (-2.4 to +2.4) and 1.9m wide (-0.95 to +0.95)
-car_top_pixels = int(BEV_HEIGHT / 2 - 2.4 * PIXELS_PER_METER)
-car_bottom_pixels = int(BEV_HEIGHT / 2 + 2.4 * PIXELS_PER_METER)
-car_left_pixels = int(BEV_WIDTH / 2 - 0.95 * PIXELS_PER_METER)
-car_right_pixels = int(BEV_WIDTH / 2 + 0.95 * PIXELS_PER_METER)
+# Render the Central Car Icon properly oriented
+car_top_pixels = int(BEV_HEIGHT / 2 - (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+car_bottom_pixels = int(BEV_HEIGHT / 2 + (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+car_left_pixels = int(BEV_WIDTH / 2 - (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
+car_right_pixels = int(BEV_WIDTH / 2 + (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
 
 cv2.rectangle(
     bev_image,
