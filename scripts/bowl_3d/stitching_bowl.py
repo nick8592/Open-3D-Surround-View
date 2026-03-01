@@ -171,8 +171,8 @@ cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (30, 30, 30)
 cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (255, 255, 255), 3)
 cv2.putText(
     bev_image,
-    "CAR",
-    (int(BEV_WIDTH / 2 - 25), car_top + 40),
+    "FRONT",
+    (int(BEV_WIDTH / 2 - 40), car_top + 40),
     cv2.FONT_HERSHEY_SIMPLEX,
     0.8,
     (255, 255, 255),

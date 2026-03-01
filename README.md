@@ -18,6 +18,13 @@ python3 demo/demo.py
 
 ## 3. Demo Output
 
+### End-to-End Visual Pipeline
+*(Original Fisheye Feeds → 2D BEV Calibration → 3D Extruded Bowl)*
+![Pipeline Animation](docs/images/animation.gif)
+
+### Comparison (Raw vs Generated Views)
+![Comparison Output](docs/images/comparison.png)
+
 ### 2D Bird's-Eye View (BEV) Flat Projection
 The 4 fisheye signals are reverse-projected onto a flat Z=0 ground plane for perfect parking alignment.
 ![2D BEV Output](docs/images/demo_bev.png)

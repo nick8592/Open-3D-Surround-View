@@ -71,8 +71,8 @@ def create_car_overlay():
     )
     cv2.putText(
         overlay,
-        "CAR",
-        (int(BEV_WIDTH / 2 - 25), car_top + 40),
+        "FRONT",
+        (int(BEV_WIDTH / 2 - 40), car_top + 40),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.8,
         (255, 255, 255),
