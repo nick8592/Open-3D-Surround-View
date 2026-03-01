@@ -109,13 +109,19 @@ for cam in cameras:
     valid_x = (map_x >= 0) & (map_x < img_w - 1)
     valid_y = (map_y >= 0) & (map_y < img_h - 1)
 
-    radial_dist = np.sqrt((map_x - img_w / 2.0) ** 2 + (map_y - img_h / 2.0) ** 2) / (
-        np.min([img_w, img_h]) / 2.0
-    )
-    weight = np.clip(1.0 - radial_dist, 0.0, 1.0)
+    # PARAMETER: Adjust this to let the camera cover a wider angle (less masking at the edges)
+    # > 1.0 pushes the mask outward (less masking, wider angle)
+    # < 1.0 pulls the mask inward (more masking, narrower angle)
+    mask_radius_scale = 1.05  
+    
+    max_radius = (np.min([img_w, img_h]) / 2.0) * mask_radius_scale
+    radial_dist = np.sqrt((map_x - img_w / 2.0) ** 2 + (map_y - img_h / 2.0) ** 2) / max_radius
+    
+    # PARAMETER: We can add an exponent to adjust the feather curve (e.g., 2.0 for softer edges)
+    weight = np.clip(1.0 - (radial_dist ** 2), 0.0, 1.0)
 
     valid_mask = z_mask & valid_x & valid_y
-    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.9) & (Y < 0.9)
+    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.95) & (Y < 0.95)
     valid_mask = valid_mask & (~car_mask)
 
     weight = weight * valid_mask.astype(np.float32)
@@ -152,8 +158,8 @@ for cam, maps in camera_maps.items():
 # Central Car Icon
 car_top = int(BEV_HEIGHT / 2 - 2.4 * PIXELS_PER_METER)
 car_bot = int(BEV_HEIGHT / 2 + 2.4 * PIXELS_PER_METER)
-car_left = int(BEV_WIDTH / 2 - 0.9 * PIXELS_PER_METER)
-car_right = int(BEV_WIDTH / 2 + 0.9 * PIXELS_PER_METER)
+car_left = int(BEV_WIDTH / 2 - 0.95 * PIXELS_PER_METER)
+car_right = int(BEV_WIDTH / 2 + 0.95 * PIXELS_PER_METER)
 
 cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (30, 30, 30), -1)
 cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (255, 255, 255), 3)

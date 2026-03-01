@@ -111,15 +111,22 @@ for cam in cameras:
     # Define a smooth feathering weight based on distance from sensor center
     # This prevents harsh seams between overlapping fields of view
     # Distance normalized so center = 0, edge = 1
-    radial_dist = np.sqrt((map_x - img_w / 2.0) ** 2 + (map_y - img_h / 2.0) ** 2) / (
-        np.min([img_w, img_h]) / 2.0
-    )
-    weight = np.clip(1.0 - radial_dist, 0.0, 1.0)
+    
+    # PARAMETER: Adjust this to let the camera cover a wider angle (less masking at the edges)
+    # > 1.0 pushes the mask outward (less masking, wider angle)
+    # < 1.0 pulls the mask inward (more masking, narrower angle)
+    mask_radius_scale = 1.05
+    
+    max_radius = (np.min([img_w, img_h]) / 2.0) * mask_radius_scale
+    radial_dist = np.sqrt((map_x - img_w / 2.0) ** 2 + (map_y - img_h / 2.0) ** 2) / max_radius
+    
+    # PARAMETER: We can add an exponent to adjust the feather curve (e.g., 2.0 for softer edges)
+    weight = np.clip(1.0 - (radial_dist ** 2), 0.0, 1.0)
 
     # Enforce boolean exclusions
     valid_mask = z_mask & valid_x & valid_y
     # Remove pixels that mapped inside the literal car bounding box footprint
-    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.9) & (Y < 0.9)
+    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.95) & (Y < 0.95)
     valid_mask = valid_mask & (~car_mask)
 
     weight = weight * valid_mask.astype(np.float32)
@@ -202,11 +209,11 @@ for cam, maps in camera_maps.items():
     print(f"  Saved LUT -> {lut_path}")
 
 # 6. Render the Central Car Icon properly oriented
-# Vehicle is 4.8m long (-2.4 to +2.4) and 1.8m wide (-0.9 to +0.9)
+# Vehicle is 4.8m long (-2.4 to +2.4) and 1.9m wide (-0.95 to +0.95)
 car_top_pixels = int(BEV_HEIGHT / 2 - 2.4 * PIXELS_PER_METER)
 car_bottom_pixels = int(BEV_HEIGHT / 2 + 2.4 * PIXELS_PER_METER)
-car_left_pixels = int(BEV_WIDTH / 2 - 0.9 * PIXELS_PER_METER)
-car_right_pixels = int(BEV_WIDTH / 2 + 0.9 * PIXELS_PER_METER)
+car_left_pixels = int(BEV_WIDTH / 2 - 0.95 * PIXELS_PER_METER)
+car_right_pixels = int(BEV_WIDTH / 2 + 0.95 * PIXELS_PER_METER)
 
 cv2.rectangle(
     bev_image,
