@@ -67,6 +67,7 @@ Uses the generated LUTs to render continuous composite frames (to simulate a rea
 ```bash
 python3 scripts/bev_2d/render_bev.py
 ```
+*(Performance on Apple Silicon (VirtualApple @ 2.50GHz): ~74 FPS)*
 
 ### Step 3: Build & Stitch 3D Bowl
 Mathematically calculates the 3D topology and projects the camera textures onto the curved walls to fix edge stretching.
@@ -80,6 +81,7 @@ Uses the 3D LUTs to render the final unified dashboard display!
 ```bash
 python3 scripts/bowl_3d/render_bowl.py
 ```
+*(Performance on Apple Silicon (VirtualApple @ 2.50GHz): ~42 FPS)*
 
 ## 6. Blender Rendering & Previews (Optional)
 Once you have generated the 3D bowl topology (`avm_pure_bowl.obj`) and matching texture (`bowl_texture.png`), you can use these Blender scripts to visually examine or showcase your results.
