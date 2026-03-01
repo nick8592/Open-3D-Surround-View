@@ -1,11 +1,11 @@
 # Open-3D-Surround-View
 
-## 1. What is this?
+## What is this?
 This repository contains a complete, end-to-end Python pipeline for generating **Automated Fisheye Camera Calibration** and simulating a **Surround-View Monitor (AVM)** system.
 
 Instead of just showing the mathematics, this repository gives you the actual tools to run a synthetic car through an advanced visualization engine. It takes input from 4 fisheye cameras (Front, Back, Left, Right), maps them perfectly to a physical ground plane (2D Bird's-Eye View), and even extrudes them onto a curved topology (3D Bowl View) for a complete parking dashboard UX.
 
-## 2. Quick Start
+## Quick Start
 Don't worry about configuring OpenCV or placing checkerboards just yet. Simply run the built-in demo which uses pre-calibrated sample data to instantly stitch a perfect surround-view image.
 
 ```bash
@@ -16,7 +16,7 @@ python3 demo/demo.py
 
 *This parses the `data/sample/` pre-calibrated images, calculates the math, and outputs both a 2D Ground mapped image (`demo/demo_bev.png`) and a 3D Curved Topology image (`demo/demo_bowl.png`).*
 
-## 3. Demo Output
+## Demo Output
 
 ### End-to-End Visual Pipeline
 *(Original Fisheye Feeds → 2D BEV → 3D AVM)*
@@ -29,7 +29,7 @@ python3 demo/demo.py
 ### Comparison (Raw vs Generated Views)
 ![Comparison Output](docs/images/comparison.png)
 
-## 4. Installation
+## Installation
 To run the full pipeline (including capturing your own synthetic chessboard data), you will need **Blender** and **Python 3**.
 
 ### Option A: Local Setup
@@ -52,7 +52,7 @@ docker run -it -v $(pwd):/app open3dsv
 ```
 *(Or use `docker compose run --rm avm_container bash`). Everything generated inside the container will automatically sync to your host machine!*
 
-## 5. Full Pipeline Usage
+## Full Pipeline Usage
 If you want to run the core stitching and projection engine on existing calibrated parameters, follow this sequence:
 
 ### Step 1: Generate 2D BEV (Flat Ground)
@@ -83,7 +83,7 @@ python3 scripts/bowl_3d/render_bowl.py
 ```
 *(Performance on Apple Silicon (VirtualApple @ 2.50GHz): ~42 FPS)*
 
-## 6. Blender Rendering & Previews (Optional)
+## Blender Rendering & Previews (Optional)
 Once you have generated the 3D bowl topology (`avm_pure_bowl.obj`) and matching texture (`bowl_texture.png`), you can use these Blender scripts to visually examine or showcase your results.
 
 ### Preview 3D Bowl Geometry
@@ -98,7 +98,7 @@ Executes a simulated "flying chase camera" spin around the 3D Bowl layout in hea
 blender -b -P scripts/blender_render/render_cinematic.py
 ```
 
-## 7. Calibration Guide
+## Calibration Guide
 If you want to re-calibrate the cameras or change their physical locations on the car, you must generate new `K`, `D`, `rvec`, and `tvec` matrices.
 
 ### Intrinsic Calibration (Lens Distortion)
@@ -127,7 +127,7 @@ python3 scripts/calibration/calibrate_extrinsic.py
 python3 scripts/calibration/evaluate_extrinsic.py
 ```
 
-## 8. Advanced Usage
+## Advanced Usage
 
 ### Centralized Configuration (`config.py`)
 If you change the physical size of the vehicle, or want to tweak the projection curves and masking, open the `config.py` file in the root directory and adjust the centralized parameters. All rendering scripts will automatically read from this single source of truth:
@@ -151,6 +151,6 @@ python3 scripts/bev_2d/evaluate_bev.py
 ### Further Reading
 For exact mathematical explanations of how the projections, intrinsic distortions, and Extrinsic 3D math work, see the `docs/` folder!
 
-## 9. License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
