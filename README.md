@@ -33,7 +33,7 @@ To run the full pipeline (including capturing your own synthetic chessboard data
 1. Install [Blender (3.6+ recommended)](https://www.blender.org/download/). Ensure `blender` is accessible via your system PATH.
 2. Install Python dependencies:
 ```bash
-pip install opencv-python numpy
+pip install -r requirements.txt
 ```
 
 ### Option B: Docker & DevContainer (Recommended)
@@ -109,11 +109,16 @@ python3 scripts/calibration/evaluate_extrinsic.py
 
 ## 7. Advanced Usage
 
-### Modifying the Car Dimensions
-If you change the physical size of the vehicle, open `scripts/bev_2d/stitching_bev.py` or the other rendering/stitching scripts and adjust the Python constants at the top of the files:
+### Centralized Configuration (`config.py`)
+If you change the physical size of the vehicle, or want to tweak the projection curves and masking, open the `config.py` file in the root directory and adjust the centralized parameters. All rendering scripts will automatically read from this single source of truth:
 ```python
+# Car Dimensions (For UI Overlay and masking)
 CAR_LENGTH = 4.8  # Meters
 CAR_WIDTH = 1.9   # Meters
+
+# 3D Bowl Specific Parameters
+FLAT_MARGIN = 1.5      # Meters of flat ground around the car before curvature starts
+BOWL_STEEPNESS = 0.5   # Exponent/Multiplier for how fast the edges curve upwards
 ```
 
 ### Checking Photometric Error
