@@ -41,6 +41,9 @@ This document provides a detailed overview of the mathematical, rendering, and l
 │   │   ├── evaluate_bev.py                 # Evaluates flat stitching alignment via Sub-pixel Photometric error checking
 │   │   ├── render_bev.py                   # High-performance simulation loop evaluating flat plane real-time rendering
 │   │   └── stitching_bev.py                # Maps logical Flat Ground boundaries and generates memory-cached LUTs
+│   ├── blender_render/
+│   │   ├── preview_3d_bowl.py              # Opens a UI environment visually importing Z-Up geometry to audit the final topological output 
+│   │   └── render_cinematic.py             # Executes a simulated flying chase camera spin around the 3D Bowl to export cinematic video
 │   ├── bowl_3d/
 │   │   ├── build_bowl.py                   # Solves strict polar mathematics to construct clean 3D Bowl geometry rulesets
 │   │   ├── render_bowl.py                  # High-performance GUI 3D Projection loop simulating a dashboard dashboard execution
@@ -50,11 +53,14 @@ This document provides a detailed overview of the mathematical, rendering, and l
 │   │   ├── calibrate_intrinsic.py          # System detecting checkerboard intersections to forge K Matrix bounds
 │   │   ├── evaluate_extrinsic.py           # Projects perfect mathematical coordinates backward onto images to generate Reprojection MAE parameters
 │   │   └── evaluate_intrinsic.py           # Validates lens un-distortion formulas analyzing curve-corrected straight-line metrics
-│   └── simulation/
-│       ├── capture_extrinsic.py            # Automated control script manipulating Blender to fire static cameras in AVM frame
-│       ├── capture_intrinsic.py            # Automated sweep rendering multi-angle testing environments for lens detection
-│       └── preview_3d_bowl.py              # Opens a UI environment visually importing Z-Up geometry to audit the final topological output 
+│   ├── synthetic_capture/
+│   │   ├── capture_extrinsic.py            # Automated control script manipulating Blender to fire static cameras in AVM frame
+│   │   └── capture_intrinsic.py            # Automated sweep rendering multi-angle testing environments for lens detection
+│   └── utils/
+│       └── generate_visuals.py             # Internal helper script to automatically generate dynamic README comparison images and animations
 ├── .devcontainer/                          # Automated setup container mounting OpenCV / Blender bindings directly for Visual Studio Code IDEs
+├── config.py                               # Centralized tuning parameters describing the vehicle dimension and rendering margins
 ├── Dockerfile                              # Core system configuration ensuring consistent environment execution paths
-└── README.md                               # Root instructional file describing the Quick Start mechanics
+├── README.md                               # Root instructional file describing the Quick Start mechanics
+└── requirements.txt                        # Locked dependency mapping restricting package incompatibility (e.g. OpenCV / Numpy C-API bindings)
 ```
