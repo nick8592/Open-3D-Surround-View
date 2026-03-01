@@ -25,14 +25,6 @@ python3 demo/demo.py
 ### Comparison (Raw vs Generated Views)
 ![Comparison Output](docs/images/comparison.png)
 
-### 2D Bird's-Eye View (BEV) Flat Projection
-The 4 fisheye signals are reverse-projected onto a flat Z=0 ground plane for perfect parking alignment.
-![2D BEV Output](docs/images/demo_bev.png)
-
-### 3D Bowl Topology Projection
-The flat ground gently curves upward at the edges (Z > 0) to eliminate the "Spider-Leg" stretching effect on background objects!
-![3D Bowl Output](docs/images/demo_bowl.png)
-
 ## 4. Installation
 To run the full pipeline (including capturing your own synthetic chessboard data), you will need **Blender** and **Python 3**.
 
