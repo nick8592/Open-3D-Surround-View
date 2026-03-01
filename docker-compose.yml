@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  avm_container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: open3dsv
+    image: open3dsv:latest
+    # Keep the container running interactively
+    stdin_open: true 
+    tty: true 
+    # Map the current working directory to the container workspace
+    # so outputs like generated videos/pngs/objs show up natively on host machine
+    volumes:
+      - .:/workspace/open3dsv
+    working_dir: /workspace/open3dsv

@@ -12,6 +12,21 @@ This repository contains a comprehensive suite of tools for **Automated Fisheye 
 
 ---
 
+## ⚡ Quick Start: Zero Friction Onboarding (Docker)
+
+AVM projects often suffer from dependency hell (OpenCV versions, NumPy conflicts, missing Blender binaries). We solved this. You can run the entire pipeline instantly without installing anything locally:
+
+```bash
+# 1. Build the isolated environment
+docker build -t open3dsv .
+
+# 2. Launch the interactive container
+docker run -it -v $(pwd):/workspace/open3dsv open3dsv
+```
+*(Alternatively, just run `docker compose run --rm avm_container bash`). The container automatically mounts your host directory, meaning any `.png` heatmaps or `.obj` 3D bowls generated inside Docker will immediately appear on your Mac/Windows host for easy viewing!*
+
+---
+
 ## 🧭 Coordinate System (ISO 8855)
 
 The entire calibration pipeline, 3D math, and exported variables adhere strictly to the **ISO 8855 Automotive Standard (Right-Handed, Z-Up)**:
