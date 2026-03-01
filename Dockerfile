@@ -43,7 +43,7 @@ RUN pip3 install \
     isort
 
 # 4. Set environment variables
-ENV PYTHONPATH=/usr/lib/python3/dist-packages:$PYTHONPATH
+ENV PYTHONPATH=/usr/lib/python3/dist-packages
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 

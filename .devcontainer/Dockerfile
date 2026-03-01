@@ -42,7 +42,7 @@ RUN pip3 install \
 
 # 4. Set environment variables
 # Ensure Python can find system OpenCV
-ENV PYTHONPATH=/usr/lib/python3/dist-packages:$PYTHONPATH
+ENV PYTHONPATH=/usr/lib/python3/dist-packages
 # Solve encoding issues for some OpenCV initializations
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
