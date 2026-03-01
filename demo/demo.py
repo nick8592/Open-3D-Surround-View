@@ -45,7 +45,7 @@ D = np.array(calib["intrinsic"]["D"], dtype=np.float64)
 np.savez_compressed(intr_npz_path, K=K, D=D)
 
 # Update extrinsics
-cams = {"front": "Cam_Front", "left": "Cam_Left", "rear": "Cam_Back", "right": "Cam_Right"}
+cams = {"front": "Cam_Front", "left": "Cam_Left", "back": "Cam_Back", "right": "Cam_Right"}
 
 for simple_name, full_name in cams.items():
     print(f"Injecting Extrinsic Parameters ({full_name})...")

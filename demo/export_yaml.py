@@ -12,7 +12,7 @@ D = intr["D"].tolist()
 
 cams = {
     "front": "Cam_Front",
-    "rear": "Cam_Back",
+    "back": "Cam_Back",
     "left": "Cam_Left",
     "right": "Cam_Right"
 }
