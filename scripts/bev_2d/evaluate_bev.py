@@ -84,7 +84,7 @@ for cam in cameras:
         & (map_y >= 0)
         & (map_y < img_h - 1)
     )
-    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.9) & (Y < 0.9)
+    car_mask = (X > -2.4) & (X < 2.4) & (Y > -0.95) & (Y < 0.95)
     valid_mask = valid_mask & (~car_mask)
 
     camera_data[cam] = {
