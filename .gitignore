@@ -158,7 +158,8 @@ cython_debug/
 .DS_Store
 
 # Project specific
-/data/
+/data/*
+!/data/sample/
 *.blend1
 *.blend2
 *.blend3

@@ -12,16 +12,23 @@ This repository contains a comprehensive suite of tools for **Automated Fisheye 
 
 ---
 
-## ⚡ Quick Start: Zero Friction Onboarding (Docker)
+## ⚡ Quick Start
 
-AVM projects often suffer from dependency hell (OpenCV versions, NumPy conflicts, missing Blender binaries). We solved this. You can run the entire pipeline instantly without installing anything locally:
+No need to fight OpenCV versions, configure NumPy, or capture your own fisheye images. Just run 3 lines of code:
 
 ```bash
-# 1. Build the isolated environment
-docker build -t open3dsv .
+git clone https://github.com/nick8592/Open-3D-Surround-View.git
+cd Open-3D-Surround-View
+python3 demo/demo.py
+```
 
-# 2. Launch the interactive container
-docker run -it -v $(pwd):/workspace/open3dsv open3dsv
+*This will instantly parse the built-in `data/sample/` pre-calibrated fisheye images, inject the mathematics, and generate your `demo/demo_bev.png` (2D Ground) and `demo/demo_bowl.png` (3D Curved Topology, rendered by Python AVM ECU Logic) directly in the newly created isolated demo folder!*
+
+**(Optional) Full Docker Environment:**
+If you want to run the entire Phase 1-4 calibration & math codebase without dependency conflicts (Blender 3.6 LTS + OpenCV + NumPy included):
+```bash
+docker build -t open3dsv .
+docker run -it -v $(pwd):/workspace/AVM open3dsv
 ```
 *(Alternatively, just run `docker compose run --rm avm_container bash`). The container automatically mounts your host directory, meaning any `.png` heatmaps or `.obj` 3D bowls generated inside Docker will immediately appear on your Mac/Windows host for easy viewing!*
 
