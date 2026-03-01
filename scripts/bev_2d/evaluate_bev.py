@@ -10,16 +10,20 @@ import sys
 import cv2
 import numpy as np
 
-# Define BEV mapping parameters (identical to render_bev.py)
-PIXELS_PER_METER = 100
-BEV_WIDTH = 1000
-BEV_HEIGHT = 1000
-X_RANGE = (-5.0, 5.0)
-Y_RANGE = (-5.0, 5.0)
-CAR_LENGTH = 4.8
-CAR_WIDTH = 1.9
-
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+
+if base_dir not in sys.path:
+    sys.path.append(base_dir)
+
+import config
+
+PIXELS_PER_METER = config.PIXELS_PER_METER
+BEV_WIDTH = config.BEV_WIDTH
+BEV_HEIGHT = config.BEV_HEIGHT
+X_RANGE = config.X_RANGE
+Y_RANGE = config.Y_RANGE
+CAR_LENGTH = config.CAR_LENGTH
+CAR_WIDTH = config.CAR_WIDTH
 intrinsic_params_path = os.path.join(
     base_dir, "data/calibration/intrinsic/params/intrinsic_params.npz"
 )

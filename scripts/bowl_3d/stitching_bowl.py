@@ -10,16 +10,20 @@ import sys
 import cv2
 import numpy as np
 
-# Define 3D Bowl mapping parameters
-PIXELS_PER_METER = 100
-BEV_WIDTH = 1000  # 10m x 10m area
-BEV_HEIGHT = 1000
-X_RANGE = (-5.0, 5.0)  # Meters
-Y_RANGE = (-5.0, 5.0)  # Meters
-CAR_LENGTH = 4.8
-CAR_WIDTH = 1.9
-
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+
+if base_dir not in sys.path:
+    sys.path.append(base_dir)
+
+import config
+
+PIXELS_PER_METER = config.PIXELS_PER_METER
+BEV_WIDTH = config.BEV_WIDTH
+BEV_HEIGHT = config.BEV_HEIGHT
+X_RANGE = config.X_RANGE
+Y_RANGE = config.Y_RANGE
+CAR_LENGTH = config.CAR_LENGTH
+CAR_WIDTH = config.CAR_WIDTH
 intrinsic_params_path = os.path.join(
     base_dir, "data/calibration/intrinsic/params/intrinsic_params.npz"
 )
@@ -55,8 +59,8 @@ dy = np.maximum(np.abs(Y) - 1.5, 0.0)
 R_dist = np.sqrt(dx**2 + dy**2)
 
 # Bowl Depth Geometry (Z-up Curve)
-FLAT_MARGIN = 1.5
-BOWL_STEEPNESS = 0.5
+FLAT_MARGIN = config.FLAT_MARGIN
+BOWL_STEEPNESS = config.BOWL_STEEPNESS
 Z = np.where(R_dist <= FLAT_MARGIN, 0.0, ((R_dist - FLAT_MARGIN) ** 2) * BOWL_STEEPNESS)
 
 pts_3d = np.stack((X, Y, Z), axis=-1).reshape(-1, 1, 3).astype(np.float32)
@@ -114,7 +118,7 @@ for cam in cameras:
     # PARAMETER: Adjust this to let the camera cover a wider angle (less masking at the edges)
     # > 1.0 pushes the mask outward (less masking, wider angle)
     # < 1.0 pulls the mask inward (more masking, narrower angle)
-    mask_radius_scale = 1.05  
+    mask_radius_scale = config.MASK_RADIUS_SCALE  
     
     max_radius = (np.min([img_w, img_h]) / 2.0) * mask_radius_scale
     radial_dist = np.sqrt((map_x - img_w / 2.0) ** 2 + (map_y - img_h / 2.0) ** 2) / max_radius
