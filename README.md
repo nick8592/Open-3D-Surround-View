@@ -150,3 +150,7 @@ python3 scripts/bev_2d/evaluate_bev.py
 
 ### Further Reading
 For exact mathematical explanations of how the projections, intrinsic distortions, and Extrinsic 3D math work, see the `docs/` folder!
+
+## 9. License
+
+This project is licensed under the [MIT License](LICENSE).
