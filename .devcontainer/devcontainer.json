@@ -1,9 +1,8 @@
 {
     "name": "SVM_Dev_Env",
-    "build": {
-        "dockerfile": "../Dockerfile",
-        "context": ".."
-    },
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "svm_container",
+    "workspaceFolder": "/app",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -12,19 +11,6 @@
                 "njpwerner.autodocstring"
             ]
         }
-    },
-    "mounts": [
-        "source=${localWorkspaceFolder},target=/workspace,type=bind"
-    ],
-    // Automatically attempts to pass the host GPU to the Docker container (Works for WSL2/Linux with Nvidia). 
-    // Ignore if running on Mac OS Apple Silicon, as Rosetta 2 handles GPU natively differently.
-    "runArgs": [
-        "--gpus",
-        "all"
-    ],
-    "containerEnv": {
-        "NVIDIA_VISIBLE_DEVICES": "all",
-        "NVIDIA_DRIVER_CAPABILITIES": "all"
     },
     "remoteUser": "root"
 }
