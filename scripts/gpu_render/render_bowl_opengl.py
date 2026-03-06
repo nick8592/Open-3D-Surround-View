@@ -83,6 +83,40 @@ def load_camera_texture(filepath):
     # Let's keep it as is.
     return create_texture_from_data(img, is_float=False)
 
+def load_obj(filename):
+    vertices = []
+    uvs = []
+    indices = []
+
+    with open(filename, 'r') as f:
+        for line in f:
+            if line.startswith('v '):
+                parts = line.strip().split()
+                vertices.append([float(parts[1]), float(parts[2]), float(parts[3])])
+            elif line.startswith('vt '):
+                parts = line.strip().split()
+                uvs.append([float(parts[1]), float(parts[2])])
+            elif line.startswith('f '):
+                parts = line.strip().split()
+                for i in range(1, 4):
+                    idx_data = parts[i].split('/')
+                    # OBJ is 1-based, we need 0-based
+                    v_idx = int(idx_data[0]) - 1
+                    indices.append(v_idx)
+
+    # Interleave V and UV into a single array
+    # Note: this assumes v and vt share the same index, which is common but not guaranteed for all .obj
+    # Looking at svm_pure_bowl.obj, f 3113/3113 shows they match exactly 1:1.
+    vertex_data = []
+    for i in range(len(vertices)):
+        vertex_data.extend(vertices[i])
+        if i < len(uvs):
+            vertex_data.extend(uvs[i])
+        else:
+            vertex_data.extend([0.0, 0.0]) # fallback
+            
+    return np.array(vertex_data, dtype=np.float32), np.array(indices, dtype=np.uint32)
+
 def main():
     if not glfw.init():
         print("Failed to initialize GLFW!")
@@ -114,15 +148,10 @@ def main():
         os.path.join(script_dir, "shaders", "svm_bowl.frag")
     )
 
-    # Basic flat Quad, showing complete 0.0 to 1.0 UV range
-    vertices = np.array([
-         1.0,  1.0, 0.0,   1.0, 1.0,
-         1.0, -1.0, 0.0,   1.0, 0.0,
-        -1.0, -1.0, 0.0,   0.0, 0.0,
-        -1.0,  1.0, 0.0,   0.0, 1.0
-    ], dtype=np.float32)
-
-    indices = np.array([0, 1, 3, 1, 2, 3], dtype=np.uint32)
+    print("Loading 3D Bowl Geometry...")
+    obj_path = os.path.join(proj_root, "data", "bowl_3d", "svm_pure_bowl.obj")
+    vertices, indices = load_obj(obj_path)
+    index_count = len(indices)
 
     vao = glGenVertexArrays(1)
     glBindVertexArray(vao)
@@ -135,10 +164,14 @@ def main():
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, GL_STATIC_DRAW)
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * vertices.itemsize, ctypes.c_void_p(0))
+    # Position attribute (X, Y, Z) (stride is 5 floats = 20 bytes)
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * 4, ctypes.c_void_p(0))
     glEnableVertexAttribArray(0)
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * vertices.itemsize, ctypes.c_void_p(3 * vertices.itemsize))
+    
+    # Texture Coord attribute (U, V)
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * 4, ctypes.c_void_p(3 * 4))
     glEnableVertexAttribArray(1)
+    
     glBindVertexArray(0)
 
     print("Loading GPU textures...")
@@ -175,17 +208,25 @@ def main():
     view_loc = glGetUniformLocation(shader_program, "view")
     proj_loc = glGetUniformLocation(shader_program, "projection")
 
+    # -------------------------------------------------------------
+    # Render the sequence or single frame
+    # -------------------------------------------------------------
     print("Rendering single frame to buffer...")
-    glClearColor(0.2, 0.2, 0.2, 1.0)
+    glClearColor(0.1, 0.1, 0.1, 1.0)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     glUseProgram(shader_program)
 
-    # Basic flat top-down view to see the whole quad
-    model = glm.translate(glm.mat4(1.0), glm.vec3(0.0, 0.0, 0.0))
-    # Move camera back enough to see the -1 to 1 quad 
-    view = glm.translate(glm.mat4(1.0), glm.vec3(0.0, 0.0, -2.5)) 
-    projection = glm.perspective(glm.radians(45.0), WINDOW_WIDTH / WINDOW_HEIGHT, 0.1, 100.0)
+    # 3D Transform to view the bowl properly
+    model = glm.mat4(1.0)
+    # The bowl is typically exported with Z as Up (Automotive ISO 8855), so we tilt it to be visible in OpenGL's Y-Up world
+    model = glm.rotate(model, glm.radians(-65.0), glm.vec3(1.0, 0.0, 0.0))
+    # Spin it slightly so we see the cinematic angle
+    model = glm.rotate(model, glm.radians(30.0), glm.vec3(0.0, 0.0, 1.0))
+    
+    # pull camera back to fit the 10m x 10m bowl 
+    view = glm.translate(glm.mat4(1.0), glm.vec3(0.0, -1.0, -15.0)) 
+    projection = glm.perspective(glm.radians(50.0), WINDOW_WIDTH / WINDOW_HEIGHT, 0.1, 100.0)
 
     glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm.value_ptr(model))
     glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm.value_ptr(view))
@@ -204,7 +245,7 @@ def main():
         glBindTexture(GL_TEXTURE_2D, tex_id)
     
     glBindVertexArray(vao)
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
+    glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, None)
 
     glfw.swap_buffers(window)
     glfw.poll_events()
