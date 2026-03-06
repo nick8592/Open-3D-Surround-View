@@ -16,5 +16,11 @@
     "mounts": [
         "source=${localWorkspaceFolder},target=/workspace,type=bind"
     ],
+    // Automatically attempts to pass the host GPU to the Docker container (Works for WSL2/Linux with Nvidia). 
+    // Ignore if running on Mac OS Apple Silicon, as Rosetta 2 handles GPU natively differently.
+    "runArgs": [
+        "--gpus",
+        "all"
+    ],
     "remoteUser": "root"
 }
