@@ -167,3 +167,4 @@ cython_debug/
 *.log
 demo/*.jpg
 demo/*.png
+gpu_preview.png
