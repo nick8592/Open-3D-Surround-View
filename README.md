@@ -45,6 +45,11 @@ This avoids all dependency conflicts (Blender and OpenCV come pre-installed).
 **Using an IDE (e.g. VS Code):**
 Simply open the repository folder in VS Code and click **Reopen in Container** when prompted. The pre-configured `.devcontainer` will automatically build the isolated environment so you can run scripts and use the terminal directly from your editor!
 
+> **Hardware Warning (Nvidia GPU Passthrough):**  
+> By default, the `devcontainer.json` and `docker-compose.yml` are configured to pass an Nvidia GPU into the container (`runArgs: ["--gpus", "all"]`) to achieve maximum FPS in the OpenGL rendering pipeline.  
+> * **If you are on Mac Apple Silicon** or an **AMD/Intel GPU**, Docker may throw a `could not select device driver` error upon building.  
+> * **To fix this:** Simply open `.devcontainer/devcontainer.json` and `docker-compose.yml`, delete the `runArgs`/`deploy` blocks, and rebuild! The software renderer (`llvmpipe`) will still easily hit ~140 FPS on your CPU.
+
 **Using CLI Docker:**
 ```bash
 docker build -t open3dsv .
