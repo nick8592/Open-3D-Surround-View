@@ -34,17 +34,9 @@ RUN wget https://download.blender.org/release/Blender3.6/blender-3.6.5-linux-x64
     && rm blender-3.6.5-linux-x64.tar.xz
 
 # 3. Upgrade pip and install critical Python libraries
-# Warning: NumPy 2.x introduces C-API breaking changes with many pre-compiled CV packages. Strictly capping <2.
+COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --upgrade pip
-RUN pip3 install \
-    "numpy<2" \
-    pybind11 \
-    scipy \
-    fake-bpy-module-3.6 \
-    matplotlib \
-    black \
-    isort \
-    pyyaml
+RUN pip3 install -r /tmp/requirements.txt
 
 # 4. Set environment variables
 ENV PYTHONPATH=/usr/lib/python3/dist-packages
