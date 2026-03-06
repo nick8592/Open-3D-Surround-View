@@ -90,9 +90,13 @@ A production-grade rendering pipeline via OpenGL. This offloads the pixel-mappin
 python3 scripts/gpu_render/export_gpu_assets.py
 
 # 2. Render utilizing PyOpenGL Hardware Shaders 
-# (If working headless inside Docker, you can run: xvfb-run -s "-screen 0 1280x720x24" python3 scripts/gpu_render/render_bowl_opengl.py to generate an offscreen render)
-python3 scripts/gpu_render/render_bowl_opengl.py
+# Note: If you are running strictly headless inside the Docker container, use xvfb-run to simulate a display buffer:
+xvfb-run -s "-screen 0 1280x720x24" python3 scripts/gpu_render/render_bowl_opengl.py
+
+# If you are running natively on a host machine with a GUI and GPU attached, simply run:
+# python3 scripts/gpu_render/render_bowl_opengl.py
 ```
+*(Check `gpu_preview.png` to see the resulting composite frame output, and look at the terminal output to verify if your hardware GPU was successfully detected and what your exact FPS benchmark is!)*
 
 ## Blender Rendering & Previews (Optional)
 Once you have generated the 3D bowl topology (`svm_pure_bowl.obj`) and matching texture (`bowl_texture.png`), you can use these Blender scripts to visually examine or showcase your results.

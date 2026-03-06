@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     libdbus-1-3 \
+    xvfb \
     wget \
     xz-utils \
     git \

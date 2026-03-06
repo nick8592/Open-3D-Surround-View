@@ -134,7 +134,13 @@ def main():
         return
 
     glfw.make_context_current(window)
-    glfw.swap_interval(1)
+    glfw.swap_interval(0) # Disable VSYNC for raw FPS benchmarking
+
+    print("--- OpenGL Hardware Info ---")
+    print("Vendor:  ", glGetString(GL_VENDOR).decode())
+    print("Renderer:", glGetString(GL_RENDERER).decode())
+    print("Version: ", glGetString(GL_VERSION).decode())
+    print("----------------------------")
 
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_BLEND)
@@ -211,28 +217,13 @@ def main():
     # -------------------------------------------------------------
     # Render the sequence or single frame
     # -------------------------------------------------------------
-    print("Rendering single frame to buffer...")
-    glClearColor(0.1, 0.1, 0.1, 1.0)
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
+    import time
+    
+    print("Starting 1000-frame rendering benchmark loop...")
+    
     glUseProgram(shader_program)
 
-    # 3D Transform to view the bowl properly
-    model = glm.mat4(1.0)
-    # The bowl is typically exported with Z as Up (Automotive ISO 8855), so we tilt it to be visible in OpenGL's Y-Up world
-    model = glm.rotate(model, glm.radians(-65.0), glm.vec3(1.0, 0.0, 0.0))
-    # Spin it slightly so we see the cinematic angle
-    model = glm.rotate(model, glm.radians(30.0), glm.vec3(0.0, 0.0, 1.0))
-    
-    # pull camera back to fit the 10m x 10m bowl 
-    view = glm.translate(glm.mat4(1.0), glm.vec3(0.0, -1.0, -15.0)) 
-    projection = glm.perspective(glm.radians(50.0), WINDOW_WIDTH / WINDOW_HEIGHT, 0.1, 100.0)
-
-    glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm.value_ptr(model))
-    glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm.value_ptr(view))
-    glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm.value_ptr(projection))
-
-    # Bind 9 textures to their slots
+    # Bind 9 textures to their slots permanently for the loop
     textures = [
         (GL_TEXTURE0, tex_cam_front),    (GL_TEXTURE1, tex_cam_back),
         (GL_TEXTURE2, tex_cam_left),     (GL_TEXTURE3, tex_cam_right),
@@ -243,14 +234,48 @@ def main():
     for tex_unit, tex_id in textures:
         glActiveTexture(tex_unit)
         glBindTexture(GL_TEXTURE_2D, tex_id)
+
+    num_frames = 1000
+    start_time = time.time()
+
+    for i in range(num_frames):
+        glClearColor(0.1, 0.1, 0.1, 1.0)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        # 3D Transform to view the bowl properly
+        model = glm.mat4(1.0)
+        # The bowl is typically exported with Z as Up (Automotive ISO 8855), so we tilt it to be visible in OpenGL's Y-Up world
+        model = glm.rotate(model, glm.radians(-65.0), glm.vec3(1.0, 0.0, 0.0))
+        # Spin it slightly over time to simulate a dynamic moving camera
+        spin_angle = 30.0 + (i * 0.1)
+        model = glm.rotate(model, glm.radians(spin_angle), glm.vec3(0.0, 0.0, 1.0))
+        
+        # pull camera back to fit the 10m x 10m bowl 
+        view = glm.translate(glm.mat4(1.0), glm.vec3(0.0, -1.0, -15.0)) 
+        projection = glm.perspective(glm.radians(50.0), WINDOW_WIDTH / WINDOW_HEIGHT, 0.1, 100.0)
+
+        glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm.value_ptr(model))
+        glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm.value_ptr(view))
+        glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm.value_ptr(projection))
+        
+        glBindVertexArray(vao)
+        glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, None)
+
+        glfw.swap_buffers(window)
+        glfw.poll_events()
+
+    end_time = time.time()
+    elapsed = end_time - start_time
+    fps = num_frames / elapsed
     
-    glBindVertexArray(vao)
-    glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, None)
+    print("\n" + "="*30)
+    print(f"BENCHMARK COMPLETE")
+    print(f"Frames rendered: {num_frames}")
+    print(f"Time elapsed:    {elapsed:.2f} seconds")
+    print(f"Average FPS:     {fps:.2f} FPS")
+    print("="*30 + "\n")
 
-    glfw.swap_buffers(window)
-    glfw.poll_events()
-
-    # Read the pixels straight from the OpenGL Framebuffer
+    # Read the final pixel frame straight from the OpenGL Framebuffer
     glPixelStorei(GL_PACK_ALIGNMENT, 1)
     data = glReadPixels(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE)
     image = np.frombuffer(data, dtype=np.uint8).reshape(WINDOW_HEIGHT, WINDOW_WIDTH, 3)
