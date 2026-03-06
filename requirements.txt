@@ -13,3 +13,8 @@ pybind11
 # Code styling tools
 black>=23.0.0
 isort>=5.0.0
+
+# GPU Rendering Support
+PyOpenGL==3.1.7
+glfw==2.7.0
+PyGLM==2.7.1
