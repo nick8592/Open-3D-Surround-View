@@ -77,11 +77,22 @@ python3 scripts/bowl_3d/stitching_bowl.py
 ```
 
 ### Step 4: Render 3D Bowl (Simulated Real-Time)
-Uses the 3D LUTs to render the final unified dashboard display!
+Uses the CPU-based CV2 Look-Up Tables to render the unified dashboard display (Python / OpenCV execution path).
 ```bash
 python3 scripts/bowl_3d/render_bowl.py
 ```
 *(Performance on Apple Silicon (VirtualApple @ 2.50GHz): ~42 FPS)*
+
+### Step 5: Render 3D Bowl (Hardware GPU Accelerated)
+A production-grade rendering pipeline via OpenGL. This offloads the pixel-mapping LUT computations and image blending strictly to GLSL shaders, enabling massively parallel processing performance across the vehicle UI.
+```bash
+# 1. Convert CPU Arrays to Raw Binary Float Maps (.bin) for the graphics card
+python3 scripts/gpu_render/export_gpu_assets.py
+
+# 2. Render utilizing PyOpenGL Hardware Shaders 
+# (If working headless inside Docker, you can run: xvfb-run -s "-screen 0 1280x720x24" python3 scripts/gpu_render/render_bowl_opengl.py to generate an offscreen render)
+python3 scripts/gpu_render/render_bowl_opengl.py
+```
 
 ## Blender Rendering & Previews (Optional)
 Once you have generated the 3D bowl topology (`svm_pure_bowl.obj`) and matching texture (`bowl_texture.png`), you can use these Blender scripts to visually examine or showcase your results.

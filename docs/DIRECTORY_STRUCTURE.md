@@ -25,6 +25,9 @@ This document provides a detailed overview of the mathematical, rendering, and l
 │   │       ├── debug/                      # Extracted 2D vs 3D corners and plumb-lines for distortion checking
 │   │       ├── images/                     # Input simulated checkerboard patterns for K/D extraction
 │   │       └── params/                     # Final Intrinsic Lens K and D matrices (.npz/.xml)
+│   ├── gpu_assets/                             
+│   │   ├── lut_*.bin                   # 0.0 - 1.0 Normalized Float Look-Up coordinates for Shader injection
+│   │   └── blend_mask.bin              # 4-Channel RGBA Multi-Camera overlapping feather mask
 │   └── sample/                             
 │       └── ...                             # Built-in front/left/right/back fisheye captures for Quick Start demo
 ├── demo/                                   
@@ -32,6 +35,11 @@ This document provides a detailed overview of the mathematical, rendering, and l
 │   └── export_yaml.py                      # Generates standard readable YAML from the calibration parameters
 ├── docs/                                   
 │   ├── images/                             # Contains preview/demo output imagery injected into the README
+│   ├── 01_camera_calibration.md
+│   ├── 02_bev_2d_mapping.md
+│   ├── 03_bowl_3d_projection.md
+│   ├── 04_evaluation_metrics.md
+│   ├── 05_gpu_rendering_pipeline.md        # Comprehensive breakdown of OpenGL Vertex/Fragment Shaders & Pipeline
 │   └── DIRECTORY_STRUCTURE.md              # This file
 ├── scenes/                                 # 3D Topology Assets
 │   ├── svm_v1.blend                        # Core vehicle mounting & camera rig Blender scene
@@ -48,6 +56,12 @@ This document provides a detailed overview of the mathematical, rendering, and l
 │   │   ├── build_bowl.py                   # Solves strict polar mathematics to construct clean 3D Bowl geometry rulesets
 │   │   ├── render_bowl.py                  # High-performance GUI 3D Projection loop simulating a dashboard dashboard execution
 │   │   └── stitching_bowl.py               # Generates mapping UVs bridging the 4 Extrinsic fisheye feeds logically over a curved Z-Up wall
+│   ├── gpu_render/
+│   │   ├── shaders/
+│   │   │   ├── svm_bowl.vert               # GLSL Core 330 Vertex Mapping Pipeline
+│   │   │   └── svm_bowl.frag               # GLSL Core 330 Parallelized Multi-Texture Spline Fragment Logic
+│   │   ├── export_gpu_assets.py            # Restructures python math structs logically to C++ OpenGL friendly binary mappings
+│   │   └── render_bowl_opengl.py           # Real-Time ECU Headless Simulation using Native VRAM computation pathways
 │   ├── calibration/
 │   │   ├── calibrate_extrinsic.py          # Core logic solving Physical Orientation (Yaw/Pitch/Roll) arrays
 │   │   ├── calibrate_intrinsic.py          # System detecting checkerboard intersections to forge K Matrix bounds
