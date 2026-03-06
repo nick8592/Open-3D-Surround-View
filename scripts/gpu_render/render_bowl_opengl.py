@@ -284,7 +284,10 @@ def main():
     image = np.flipud(image)
     image_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    out_path = os.path.join(proj_root, "gpu_preview.png")
+    out_dir = os.path.join(proj_root, "data", "gpu_assets", "debug")
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, "gpu_preview.png")
+    
     cv2.imwrite(out_path, image_bgr)
     print(f"Successfully rendered and saved to: {out_path}")
 

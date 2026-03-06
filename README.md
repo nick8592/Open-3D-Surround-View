@@ -96,7 +96,7 @@ xvfb-run -s "-screen 0 1280x720x24" python3 scripts/gpu_render/render_bowl_openg
 # If you are running natively on a host machine with a GUI and GPU attached, simply run:
 # python3 scripts/gpu_render/render_bowl_opengl.py
 ```
-*(Check `gpu_preview.png` to see the resulting composite frame output, and look at the terminal output to verify if your hardware GPU was successfully detected and what your exact FPS benchmark is!)*
+*(Check `data/gpu_assets/debug/gpu_preview.png` to see the resulting composite frame output, and look at the terminal output to verify if your hardware GPU was successfully detected and what your exact FPS benchmark is!)*
 
 ## Blender Rendering & Previews (Optional)
 Once you have generated the 3D bowl topology (`svm_pure_bowl.obj`) and matching texture (`bowl_texture.png`), you can use these Blender scripts to visually examine or showcase your results.
