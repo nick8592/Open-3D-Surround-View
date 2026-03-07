@@ -109,19 +109,22 @@ Once you have generated the 3D bowl topology (`svm_pure_bowl.obj`) and matching 
 ### Preview 3D Bowl Geometry
 Opens the Blender GUI with the generated OBJ and textures automatically loaded, enforcing proper ISO 8855 Automotive axes. Useful for debugging your bowl topology structure.
 ```bash
-# Note: If running inside the headless Docker container, use xvfb-run:
-# xvfb-run -a blender -P scripts/blender_render/preview_3d_bowl.py
+# Note: Since this opens a GUI, if you are running in a headless Docker environment 
+# without X11 forwarding, you must use xvfb-run to simulate a display buffer:
+xvfb-run -a blender -P scripts/blender_render/preview_3d_bowl.py
 
-blender -P scripts/blender_render/preview_3d_bowl.py
+# If running natively with a display:
+# blender -P scripts/blender_render/preview_3d_bowl.py
 ```
 
 ### Render Cinematic Turntable Animation
 Executes a simulated "flying chase camera" spin around the 3D Bowl layout in headless mode and exports an MP4 cinematic video.
 ```bash
 # Note: Even in background mode (-b), Blender requires a display server in Docker. Use xvfb-run:
-# xvfb-run -a blender -b -P scripts/blender_render/render_cinematic.py
+xvfb-run -a blender -b -P scripts/blender_render/render_cinematic.py
 
-blender -b -P scripts/blender_render/render_cinematic.py
+# If running natively:
+# blender -b -P scripts/blender_render/render_cinematic.py
 ```
 
 ## Calibration Guide
@@ -131,7 +134,11 @@ If you want to re-calibrate the cameras or change their physical locations on th
 Computes the internal properties of the fisheye lens (`K` and `D`).
 ```bash
 # 1. Synthetically capture checkerboards using Blender
-blender -b scenes/calib_intrinsic.blend -P scripts/synthetic_capture/capture_intrinsic.py
+# Note: If running inside the headless Docker container, use xvfb-run:
+xvfb-run -a blender -b scenes/calib_intrinsic.blend -P scripts/synthetic_capture/capture_intrinsic.py
+
+# If running natively:
+# blender -b scenes/calib_intrinsic.blend -P scripts/synthetic_capture/capture_intrinsic.py
 
 # 2. Run OpenCV mathematical solver
 python3 scripts/calibration/calibrate_intrinsic.py
@@ -144,7 +151,11 @@ python3 scripts/calibration/evaluate_intrinsic.py
 Computes the physical (X, Y, Z, Yaw, Pitch, Roll) orientation of the cameras mapped to the ISO 8855 automotive standard.
 ```bash
 # 1. Capture the 4 cameras looking at the floor checkerboards
-blender -b scenes/svm_v1.blend -P scripts/synthetic_capture/capture_extrinsic.py
+# Note: If running inside the headless Docker container, use xvfb-run:
+xvfb-run -a blender -b scenes/svm_v1.blend -P scripts/synthetic_capture/capture_extrinsic.py
+
+# If running natively:
+# blender -b scenes/svm_v1.blend -P scripts/synthetic_capture/capture_extrinsic.py
 
 # 2. Run OpenCV mathematical solver 
 python3 scripts/calibration/calibrate_extrinsic.py
