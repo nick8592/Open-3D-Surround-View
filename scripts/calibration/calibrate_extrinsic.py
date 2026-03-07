@@ -10,6 +10,9 @@ import sys
 import cv2
 import numpy as np
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+import config
+
 # 1. Load Intrinsic parameters dynamically
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 if os.path.exists("/workspace/data/calibration/intrinsic/params/intrinsic_params.npz"):
@@ -30,11 +33,11 @@ print(f"Loaded intrinsic parameters from {params_path}")
 
 
 def get_pad_3d_points(center_x, center_y, cam_name):
-    square_size = 0.25
+    square_size = config.CALIB_SQUARE_SIZE
     grid_w, grid_h = (
-        7,
-        5,
-    )  # 7 corners along width (image X), 5 corners along height (image Y)
+        config.CALIB_PATTERN_W,
+        config.CALIB_PATTERN_H,
+    )  # corners along width (image X) and height (image Y)
     objp = np.zeros((grid_w * grid_h, 3), np.float32)
 
     if cam_name == "Cam_Front":
@@ -92,22 +95,14 @@ def get_pad_3d_points(center_x, center_y, cam_name):
     return objp, (grid_w, grid_h)
 
 
-camera_config = {
-    "Cam_Front": (3.5, 0),
-    "Cam_Back": (-3.5, 0),
-    "Cam_Left": (0, 2),
-    "Cam_Right": (0, -2),
-}
-
-
-def solve_extrinsic_for_camera(cam_name, center):
+def solve_extrinsic_for_camera(cam_name, pad_center):
     img_path = f"data/calibration/extrinsic/images/{cam_name}.png"
     img = cv2.imread(img_path)
     if img is None:
         return None
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    obj_pts, pattern_size = get_pad_3d_points(center[0], center[1], cam_name)
+    obj_pts, pattern_size = get_pad_3d_points(pad_center[0], pad_center[1], cam_name)
 
     ret, corners = cv2.findChessboardCorners(
         gray, pattern_size, cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_NORMALIZE_IMAGE
@@ -171,9 +166,9 @@ def solve_extrinsic_for_camera(cam_name, center):
 results = {}
 output_dir = "data/calibration/extrinsic/params"
 os.makedirs(output_dir, exist_ok=True)
-for cam, center in camera_config.items():
+for cam, pad_center in config.CALIB_PAD_CENTER.items():
     print(f"Solving {cam}...")
-    ext = solve_extrinsic_for_camera(cam, center)
+    ext = solve_extrinsic_for_camera(cam, pad_center)
     if ext:
         rvec, tvec = ext[0], ext[1]
         results[cam] = {"rvec": rvec, "tvec": tvec}

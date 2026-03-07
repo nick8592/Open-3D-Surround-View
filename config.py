@@ -5,6 +5,18 @@ Central configuration file for Open-3D-Surround-View.
 Adjust these parameters to change the dimensions, resolution, or projection curves of your vehicle.
 """
 
+# Extrinsic Calibration
+CALIB_SQUARE_SIZE = 0.25 # Meters (size of each square in the calibration pattern)
+CALIB_PATTERN_W = 7 # Number of inner corners along the width (X direction in image)
+CALIB_PATTERN_H = 5 # Number of inner corners along the height (Y direction in image)
+
+CALIB_PAD_CENTER = { # Meters from the car center to the center of the calibration pad in the real world
+    "Cam_Front": (3.5, 0), 
+    "Cam_Back": (-3.5, 0),
+    "Cam_Left": (0, 2),
+    "Cam_Right": (0, -2),
+}
+
 # SVM Resolution and Scale
 PIXELS_PER_METER = 100
 BEV_WIDTH = 1000  # 10m x 10m area
