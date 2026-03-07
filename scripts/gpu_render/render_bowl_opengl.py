@@ -86,6 +86,7 @@ def load_camera_texture(filepath):
 def load_obj(filename):
     vertices = []
     uvs = []
+    normals = []
     indices = []
 
     with open(filename, 'r') as f:
@@ -96,6 +97,9 @@ def load_obj(filename):
             elif line.startswith('vt '):
                 parts = line.strip().split()
                 uvs.append([float(parts[1]), float(parts[2])])
+            elif line.startswith('vn '):
+                parts = line.strip().split()
+                normals.append([float(parts[1]), float(parts[2]), float(parts[3])])
             elif line.startswith('f '):
                 parts = line.strip().split()
                 for i in range(1, 4):
@@ -104,16 +108,24 @@ def load_obj(filename):
                     v_idx = int(idx_data[0]) - 1
                     indices.append(v_idx)
 
-    # Interleave V and UV into a single array
-    # Note: this assumes v and vt share the same index, which is common but not guaranteed for all .obj
-    # Looking at svm_pure_bowl.obj, f 3113/3113 shows they match exactly 1:1.
+    # Interleave V, UV, and Normal into a single array
+    # Note: this assumes v, vt, and vn share the same index, which is common but not guaranteed for all .obj
+    # Looking at svm_pure_bowl.obj, f 3113/3113/3113 shows they match exactly 1:1.
     vertex_data = []
     for i in range(len(vertices)):
         vertex_data.extend(vertices[i])
+        
+        # Add UV if it exists
         if i < len(uvs):
             vertex_data.extend(uvs[i])
         else:
             vertex_data.extend([0.0, 0.0]) # fallback
+            
+        # Add Normal if it exists
+        if i < len(normals):
+            vertex_data.extend(normals[i])
+        else:
+            vertex_data.extend([0.0, 0.0, 1.0]) # fallback
             
     return np.array(vertex_data, dtype=np.float32), np.array(indices, dtype=np.uint32)
 
@@ -170,13 +182,17 @@ def main():
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, GL_STATIC_DRAW)
 
-    # Position attribute (X, Y, Z) (stride is 5 floats = 20 bytes)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * 4, ctypes.c_void_p(0))
+    # Position attribute (X, Y, Z) (stride is 8 floats = 32 bytes)
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * 4, ctypes.c_void_p(0))
     glEnableVertexAttribArray(0)
     
     # Texture Coord attribute (U, V)
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * 4, ctypes.c_void_p(3 * 4))
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * 4, ctypes.c_void_p(3 * 4))
     glEnableVertexAttribArray(1)
+
+    # Normal attribute (NX, NY, NZ)
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * 4, ctypes.c_void_p(5 * 4))
+    glEnableVertexAttribArray(2)
     
     glBindVertexArray(0)
 
