@@ -109,12 +109,18 @@ Once you have generated the 3D bowl topology (`svm_pure_bowl.obj`) and matching 
 ### Preview 3D Bowl Geometry
 Opens the Blender GUI with the generated OBJ and textures automatically loaded, enforcing proper ISO 8855 Automotive axes. Useful for debugging your bowl topology structure.
 ```bash
+# Note: If running inside the headless Docker container, use xvfb-run:
+# xvfb-run -a blender -P scripts/blender_render/preview_3d_bowl.py
+
 blender -P scripts/blender_render/preview_3d_bowl.py
 ```
 
 ### Render Cinematic Turntable Animation
 Executes a simulated "flying chase camera" spin around the 3D Bowl layout in headless mode and exports an MP4 cinematic video.
 ```bash
+# Note: Even in background mode (-b), Blender requires a display server in Docker. Use xvfb-run:
+# xvfb-run -a blender -b -P scripts/blender_render/render_cinematic.py
+
 blender -b -P scripts/blender_render/render_cinematic.py
 ```
 
