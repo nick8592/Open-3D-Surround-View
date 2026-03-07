@@ -161,10 +161,14 @@ If you change the physical size of the vehicle, or want to tweak the projection 
 # Car Dimensions (For UI Overlay and masking)
 CAR_LENGTH = 4.8  # Meters
 CAR_WIDTH = 1.9   # Meters
+DRAW_CAR_MASK = False # Whether to draw the car mask bounding box over the final BEV map
 
 # 3D Bowl Specific Parameters
 FLAT_MARGIN = 1.5      # Meters of flat ground around the car before curvature starts
 BOWL_STEEPNESS = 0.5   # Exponent/Multiplier for how fast the edges curve upwards
+
+# Projection Mask Tuning
+MASK_RADIUS_SCALE = 1.05  # > 1.0 reduces masking on edges, letting camera see wider
 ```
 
 ### Checking Photometric Error
