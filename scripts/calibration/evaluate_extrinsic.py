@@ -12,6 +12,9 @@ import numpy as np
 
 # Load Intrinsic parameters
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+sys.path.append(base_dir)
+import config
+
 intrinsic_params_path = os.path.join(
     base_dir, "data/calibration/intrinsic/params/intrinsic_params.npz"
 )
@@ -31,8 +34,8 @@ os.makedirs(debug_dir, exist_ok=True)
 
 # Define checkerboard geometry identically to calibrate_extrinsic.py
 def get_pad_3d_points(center_x, center_y, cam_name):
-    square_size = 0.25
-    grid_w, grid_h = 7, 5
+    square_size = config.EXTRINSIC_CALIB_SQUARE_SIZE
+    grid_w, grid_h = config.EXTRINSIC_CALIB_PATTERN_W, config.EXTRINSIC_CALIB_PATTERN_H
     objp = np.zeros((grid_w * grid_h, 3), np.float32)
 
     if cam_name == "Cam_Front":
@@ -81,15 +84,6 @@ def get_pad_3d_points(center_x, center_y, cam_name):
 
     return objp, (grid_w, grid_h)
 
-
-camera_config = {
-    "Cam_Front": (3.5, 0),
-    "Cam_Back": (-3.5, 0),
-    "Cam_Left": (0, 2),
-    "Cam_Right": (0, -2),
-}
-
-
 def verify_camera(cam):
     img_path = os.path.join(base_dir, f"data/calibration/extrinsic/images/{cam}.png")
     extrinsic_path = os.path.join(
@@ -106,7 +100,7 @@ def verify_camera(cam):
         rvec = data["rvec"]
         tvec = data["tvec"]
 
-    center = camera_config[cam]
+    center = config.CALIB_PAD_CENTER[cam]
     obj_pts, pattern_size = get_pad_3d_points(center[0], center[1], cam)
 
     # Reproject 3D points back to 2D image plane using Fisheye projectPoints
@@ -149,6 +143,6 @@ def verify_camera(cam):
 
 
 print("\nVerifying Extrinsics via Reprojection Error...\n" + "-" * 50)
-for cam in camera_config.keys():
+for cam in config.CALIB_PAD_CENTER.keys():
     verify_camera(cam)
 print("-" * 50 + f"\nVisual results saved to: {debug_dir}")

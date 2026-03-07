@@ -30,10 +30,10 @@ print(f"Loaded intrinsic parameters from {params_path}")
 
 
 def get_pad_3d_points(center_x, center_y, cam_name):
-    square_size = config.CALIB_SQUARE_SIZE
+    square_size = config.EXTRINSIC_CALIB_SQUARE_SIZE
     grid_w, grid_h = (
-        config.CALIB_PATTERN_W,
-        config.CALIB_PATTERN_H,
+        config.EXTRINSIC_CALIB_PATTERN_W,
+        config.EXTRINSIC_CALIB_PATTERN_H,
     )  # corners along width (image X) and height (image Y)
     objp = np.zeros((grid_w * grid_h, 3), np.float32)
 
