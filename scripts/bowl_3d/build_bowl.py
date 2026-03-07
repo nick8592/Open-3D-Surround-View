@@ -17,12 +17,21 @@ obj_path = os.path.join(output_dir, "svm_pure_bowl.obj")
 # ==========================================
 # 3D Bowl Geometry Parameters
 # ==========================================
-MAX_RADIUS = 4.8  # Tightly clip the mesh to the valid camera coverage area
-FLAT_RADIUS = 2.5  # The center flat area radius (Ground) where Z=0
-BOWL_STEEPNESS = 0.5  # How steeply the edges curve upward
+import sys
 
-NUM_RINGS = 40  # Ring fidelity (How many concentric circles)
-NUM_SLICES = 80  # Slice fidelity (How many pie slices around)
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+if base_dir not in sys.path:
+    sys.path.append(base_dir)
+
+import config
+
+MAX_RADIUS = config.BOWL_MAX_RADIUS  # Tightly clip the mesh to the valid camera coverage area
+# By default we map the 3D obj polar flat radius to the feather distance for uniform visual
+FLAT_RADIUS = config.BOWL_FLAT_RECT_X  # The center flat area radius (Ground) where Z=0
+BOWL_STEEPNESS = config.BOWL_STEEPNESS  # How steeply the edges curve upward
+
+NUM_RINGS = config.BOWL_NUM_RINGS  # Ring fidelity (How many concentric circles)
+NUM_SLICES = config.BOWL_NUM_SLICES  # Slice fidelity (How many pie slices around)
 
 vertices = []
 uvs = []
