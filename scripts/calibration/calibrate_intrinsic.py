@@ -6,20 +6,26 @@ This module provides functionality related to calibrate intrinsic.
 
 import glob
 import os
+import sys
 
 import cv2
 import numpy as np
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+import config
+
 # Configuration
-CHECKERBOARD = (7, 7)
+CHECKERBOARD = (config.INTRINSIC_CALIB_PATTERN_W, config.INTRINSIC_CALIB_PATTERN_H)
 SUBPIX_CRITERIA = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.1)
 
 
 def calibrate():
     # Prepare 3D object points in real world space: (0,0,0), (1,0,0), (2,0,0) ...
     objp = np.zeros((1, CHECKERBOARD[0] * CHECKERBOARD[1], 3), np.float32)
-    objp[0, :, :2] = np.mgrid[0 : CHECKERBOARD[0], 0 : CHECKERBOARD[1]].T.reshape(-1, 2)
-
+    objp[0, :, :2] = (
+        np.mgrid[0 : CHECKERBOARD[0], 0 : CHECKERBOARD[1]].T.reshape(-1, 2)
+        * config.INTRINSIC_CALIB_SQUARE_SIZE
+    )
     objpoints = []  # 3D points in real world space
     imgpoints = []  # 2D points in image plane
 

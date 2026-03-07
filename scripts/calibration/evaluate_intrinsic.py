@@ -5,10 +5,15 @@ This module provides functionality related to evaluate intrinsic.
 """
 
 import os
+import sys
 
 import cv2
 import numpy as np
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
+sys.path.append(base_dir)
+import config
 
 def verify():
     # Determine project root (base_dir)
@@ -75,7 +80,7 @@ def verify():
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret, corners = cv2.findChessboardCorners(
         gray,
-        (7, 7),
+        (config.INTRINSIC_CALIB_PATTERN_W, config.INTRINSIC_CALIB_PATTERN_H),
         cv2.CALIB_CB_ADAPTIVE_THRESH
         + cv2.CALIB_CB_FAST_CHECK
         + cv2.CALIB_CB_NORMALIZE_IMAGE,
@@ -88,15 +93,15 @@ def verify():
         # Undistort the specific points mathematically
         # Use the mapped new_K to project them into the same scaling as our visual
         undistorted_pts = cv2.fisheye.undistortPoints(corners_refined, K, D, P=new_K)
-        corners_refined = undistorted_pts.reshape(7, 7, 2)
+        corners_refined = undistorted_pts.reshape(config.INTRINSIC_CALIB_PATTERN_H, config.INTRINSIC_CALIB_PATTERN_W, 2)
 
         errors = []
 
         # Calculate straightness deviation for rows
-        for i in range(7):
+        for i in range(config.INTRINSIC_CALIB_PATTERN_H):
             row = corners_refined[i, :, :]
             [vx, vy, x, y] = cv2.fitLine(row, cv2.DIST_L2, 0, 0.01, 0.01)
-            for j in range(7):
+            for j in range(config.INTRINSIC_CALIB_PATTERN_W):
                 pt = row[j]
                 # Perpendicular distance from point to the fitted line
                 dist = abs((pt[0] - x[0]) * vy[0] - (pt[1] - y[0]) * vx[0]) / np.sqrt(
@@ -105,10 +110,10 @@ def verify():
                 errors.append(dist)
 
         # Calculate straightness deviation for columns
-        for j in range(7):
+        for j in range(config.INTRINSIC_CALIB_PATTERN_W):
             col = corners_refined[:, j, :]
             [vx, vy, x, y] = cv2.fitLine(col, cv2.DIST_L2, 0, 0.01, 0.01)
-            for i in range(7):
+            for i in range(config.INTRINSIC_CALIB_PATTERN_H):
                 pt = col[i]
                 dist = abs((pt[0] - x[0]) * vy[0] - (pt[1] - y[0]) * vx[0]) / np.sqrt(
                     vx[0] ** 2 + vy[0] ** 2
@@ -128,16 +133,16 @@ def verify():
 
         # Overlay straight lines for visual debugging using the undistorted points
         vis_img = undistorted_img.copy()
-        for i in range(7):
+        for i in range(config.INTRINSIC_CALIB_PATTERN_H):
             cv2.line(
                 vis_img,
                 tuple(corners_refined[i, 0].astype(int)),
-                tuple(corners_refined[i, 6].astype(int)),
+                tuple(corners_refined[i, config.INTRINSIC_CALIB_PATTERN_W - 1].astype(int)),
                 (0, 255, 0),
                 1,
             )
             # Draw points
-            for j in range(7):
+            for j in range(config.INTRINSIC_CALIB_PATTERN_W):
                 cv2.circle(
                     vis_img,
                     tuple(corners_refined[i, j].astype(int)),
@@ -145,11 +150,11 @@ def verify():
                     (0, 0, 255),
                     -1,
                 )
-        for j in range(7):
+        for j in range(config.INTRINSIC_CALIB_PATTERN_W):
             cv2.line(
                 vis_img,
                 tuple(corners_refined[0, j].astype(int)),
-                tuple(corners_refined[6, j].astype(int)),
+                tuple(corners_refined[config.INTRINSIC_CALIB_PATTERN_H - 1, j].astype(int)),
                 (0, 255, 0),
                 1,
             )
