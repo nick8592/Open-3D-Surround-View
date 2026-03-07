@@ -5,10 +5,15 @@ Central configuration file for Open-3D-Surround-View.
 Adjust these parameters to change the dimensions, resolution, or projection curves of your vehicle.
 """
 
+# Intrinsic Calibration
+INTRINSIC_CALIB_SQUARE_SIZE = 0.25 # Meters
+INTRINSIC_CALIB_PATTERN_W = 7
+INTRINSIC_CALIB_PATTERN_H = 7
+
 # Extrinsic Calibration
-CALIB_SQUARE_SIZE = 0.25 # Meters (size of each square in the calibration pattern)
-CALIB_PATTERN_W = 7 # Number of inner corners along the width (X direction in image)
-CALIB_PATTERN_H = 5 # Number of inner corners along the height (Y direction in image)
+EXTRINSIC_CALIB_SQUARE_SIZE = 0.25 # Meters (size of each square in the calibration pattern)
+EXTRINSIC_CALIB_PATTERN_W = 7 # Number of inner corners along the width (X direction in image)
+EXTRINSIC_CALIB_PATTERN_H = 5 # Number of inner corners along the height (Y direction in image)
 
 CALIB_PAD_CENTER = { # Meters from the car center to the center of the calibration pad in the real world
     "Cam_Front": (3.5, 0), 
