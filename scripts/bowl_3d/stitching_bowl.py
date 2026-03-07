@@ -127,8 +127,6 @@ for cam in cameras:
     weight = np.clip(1.0 - (radial_dist ** 2), 0.0, 1.0)
 
     valid_mask = z_mask & valid_x & valid_y
-    car_mask = (X > -CAR_LENGTH / 2.0) & (X < CAR_LENGTH / 2.0) & (Y > -CAR_WIDTH / 2.0) & (Y < CAR_WIDTH / 2.0)
-    valid_mask = valid_mask & (~car_mask)
 
     weight = weight * valid_mask.astype(np.float32)
 
@@ -162,22 +160,23 @@ for cam, maps in camera_maps.items():
     print(f"  Saved 3D Bowl LUT -> {lut_path}")
 
 # Central Car Icon
-car_top = int(BEV_HEIGHT / 2 - (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
-car_bot = int(BEV_HEIGHT / 2 + (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
-car_left = int(BEV_WIDTH / 2 - (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
-car_right = int(BEV_WIDTH / 2 + (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
+if config.DRAW_CAR_MASK:
+    car_top = int(BEV_HEIGHT / 2 - (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+    car_bot = int(BEV_HEIGHT / 2 + (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+    car_left = int(BEV_WIDTH / 2 - (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
+    car_right = int(BEV_WIDTH / 2 + (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
 
-cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (30, 30, 30), -1)
-cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (255, 255, 255), 3)
-cv2.putText(
-    bev_image,
-    "FRONT",
-    (int(BEV_WIDTH / 2 - 40), car_top + 40),
-    cv2.FONT_HERSHEY_SIMPLEX,
-    0.8,
-    (255, 255, 255),
-    2,
-)
+    cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (30, 30, 30), -1)
+    cv2.rectangle(bev_image, (car_left, car_top), (car_right, car_bot), (255, 255, 255), 3)
+    cv2.putText(
+        bev_image,
+        "FRONT",
+        (int(BEV_WIDTH / 2 - 40), car_top + 40),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (255, 255, 255),
+        2,
+    )
 
 output_path = os.path.join(output_dir, "bowl_texture.png")
 cv2.imwrite(output_path, bev_image)

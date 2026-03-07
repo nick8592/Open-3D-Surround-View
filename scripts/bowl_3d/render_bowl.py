@@ -117,7 +117,8 @@ for i in range(NUM_FRAMES):
     final_bev = bev.astype(np.uint8)
 
     # Render UI Overlay
-    final_bev[car_mask] = car_overlay[car_mask]
+    if config.DRAW_CAR_MASK:
+        final_bev[car_mask] = car_overlay[car_mask]
 
     # Clip alpha transparency
     final_bev_rgba = cv2.cvtColor(final_bev, cv2.COLOR_BGR2BGRA)
