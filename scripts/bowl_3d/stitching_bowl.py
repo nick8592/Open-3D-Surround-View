@@ -24,6 +24,9 @@ X_RANGE = config.X_RANGE
 Y_RANGE = config.Y_RANGE
 CAR_LENGTH = config.CAR_LENGTH
 CAR_WIDTH = config.CAR_WIDTH
+FLAT_MARGIN = config.BOWL_FLAT_MARGIN
+BOWL_STEEPNESS = config.BOWL_STEEPNESS
+
 intrinsic_params_path = os.path.join(
     base_dir, "data/calibration/intrinsic/params/intrinsic_params.npz"
 )
@@ -54,13 +57,11 @@ X = X_RANGE[1] - (v / PIXELS_PER_METER)
 Y = Y_RANGE[1] - (u / PIXELS_PER_METER)
 
 # 1. Rounded Rectangle Flat Area to prevent parallax ghosting on the flat mats.
-dx = np.maximum(np.abs(X) - 2.5, 0.0)
-dy = np.maximum(np.abs(Y) - 1.5, 0.0)
+dx = np.maximum(np.abs(X) - config.BOWL_FLAT_RECT_X, 0.0)
+dy = np.maximum(np.abs(Y) - config.BOWL_FLAT_RECT_Y, 0.0)
 R_dist = np.sqrt(dx**2 + dy**2)
 
 # Bowl Depth Geometry (Z-up Curve)
-FLAT_MARGIN = config.FLAT_MARGIN
-BOWL_STEEPNESS = config.BOWL_STEEPNESS
 Z = np.where(R_dist <= FLAT_MARGIN, 0.0, ((R_dist - FLAT_MARGIN) ** 2) * BOWL_STEEPNESS)
 
 pts_3d = np.stack((X, Y, Z), axis=-1).reshape(-1, 1, 3).astype(np.float32)
