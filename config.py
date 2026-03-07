@@ -29,6 +29,7 @@ Y_RANGE = (-5.0, 5.0)  # Meters (from right to left of image)
 # Car Dimensions (For UI Overlay and masking)
 CAR_LENGTH = 4.8  # Meters
 CAR_WIDTH = 1.9   # Meters
+DRAW_CAR_MASK = False # Whether to draw the car mask bounding box over the final BEV map
 
 # 3D Bowl Specific Parameters
 FLAT_MARGIN = 1.5      # Meters of flat ground around the car before curvature starts

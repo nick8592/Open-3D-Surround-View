@@ -131,9 +131,6 @@ for cam in cameras:
 
     # Enforce boolean exclusions
     valid_mask = z_mask & valid_x & valid_y
-    # Remove pixels that mapped inside the literal car bounding box footprint
-    car_mask = (X > -CAR_LENGTH / 2.0) & (X < CAR_LENGTH / 2.0) & (Y > -CAR_WIDTH / 2.0) & (Y < CAR_WIDTH / 2.0)
-    valid_mask = valid_mask & (~car_mask)
 
     weight = weight * valid_mask.astype(np.float32)
 
@@ -215,34 +212,35 @@ for cam, maps in camera_maps.items():
     print(f"  Saved LUT -> {lut_path}")
 
 # Render the Central Car Icon properly oriented
-car_top_pixels = int(BEV_HEIGHT / 2 - (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
-car_bottom_pixels = int(BEV_HEIGHT / 2 + (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
-car_left_pixels = int(BEV_WIDTH / 2 - (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
-car_right_pixels = int(BEV_WIDTH / 2 + (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
+if config.DRAW_CAR_MASK:
+    car_top_pixels = int(BEV_HEIGHT / 2 - (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+    car_bottom_pixels = int(BEV_HEIGHT / 2 + (CAR_LENGTH / 2.0) * PIXELS_PER_METER)
+    car_left_pixels = int(BEV_WIDTH / 2 - (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
+    car_right_pixels = int(BEV_WIDTH / 2 + (CAR_WIDTH / 2.0) * PIXELS_PER_METER)
 
-cv2.rectangle(
-    bev_image,
-    (car_left_pixels, car_top_pixels),
-    (car_right_pixels, car_bottom_pixels),
-    (30, 30, 30),
-    -1,
-)
-cv2.rectangle(
-    bev_image,
-    (car_left_pixels, car_top_pixels),
-    (car_right_pixels, car_bottom_pixels),
-    (255, 255, 255),
-    3,
-)
-cv2.putText(
-    bev_image,
-    "FRONT",
-    (int(BEV_WIDTH / 2 - 40), car_top_pixels + 40),
-    cv2.FONT_HERSHEY_SIMPLEX,
-    0.8,
-    (255, 255, 255),
-    2,
-)
+    cv2.rectangle(
+        bev_image,
+        (car_left_pixels, car_top_pixels),
+        (car_right_pixels, car_bottom_pixels),
+        (30, 30, 30),
+        -1,
+    )
+    cv2.rectangle(
+        bev_image,
+        (car_left_pixels, car_top_pixels),
+        (car_right_pixels, car_bottom_pixels),
+        (255, 255, 255),
+        3,
+    )
+    cv2.putText(
+        bev_image,
+        "FRONT",
+        (int(BEV_WIDTH / 2 - 40), car_top_pixels + 40),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (255, 255, 255),
+        2,
+    )
 
 output_path = os.path.join(output_dir, "bev.png")
 cv2.imwrite(output_path, bev_image)

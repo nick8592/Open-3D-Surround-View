@@ -115,7 +115,8 @@ for i in range(NUM_FRAMES):
     final_bev = bev.astype(np.uint8)
 
     # Render UI Overlay
-    final_bev[car_mask] = car_overlay[car_mask]
+    if config.DRAW_CAR_MASK:
+        final_bev[car_mask] = car_overlay[car_mask]
 
 end_time = time.time()
 fps = NUM_FRAMES / (end_time - start_time)

@@ -82,7 +82,7 @@ for cam in cameras:
     # Convert to grayscale to remove color dependence from alignment metrics
     warped_gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
 
-    # Absolute strict valid mask (must be physical, in-sensor, and not on the car itself)
+    # Absolute strict valid mask (must be physical, in-sensor)
     valid_mask = (
         (z_cam > 0)
         & (map_x >= 0)
@@ -90,8 +90,6 @@ for cam in cameras:
         & (map_y >= 0)
         & (map_y < img_h - 1)
     )
-    car_mask = (X > -CAR_LENGTH / 2.0) & (X < CAR_LENGTH / 2.0) & (Y > -CAR_WIDTH / 2.0) & (Y < CAR_WIDTH / 2.0)
-    valid_mask = valid_mask & (~car_mask)
 
     camera_data[cam] = {
         "warped_gray": warped_gray,
