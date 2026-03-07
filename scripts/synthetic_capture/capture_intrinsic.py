@@ -6,6 +6,7 @@ This module provides functionality related to capture intrinsic.
 
 import math
 import os
+import sys
 
 import bpy
 
@@ -18,6 +19,13 @@ def main():
 
     output_dir = os.path.join(base_dir, "data", "calibration", "intrinsic", "images")
     os.makedirs(output_dir, exist_ok=True)
+
+    # Check if a Blender scene file is loaded
+    if not bpy.data.filepath:
+        print("Error: No Blender scene file loaded.")
+        print("Please specify a scene file when running the script:")
+        print("  blender -b scenes/<scene_name>.blend -P scripts/synthetic_capture/capture_intrinsic.py")
+        sys.exit(1)
 
     # Try to find a suitable camera
     # 1. Search for "Camera"
