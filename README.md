@@ -32,6 +32,9 @@ python3 demo/demo.py
 ## Installation
 To run the full pipeline (including capturing your own synthetic chessboard data), you will need **Blender** and **Python 3**.
 
+> **⚠️ Caution on Blender Versions:**  
+> If you plan to customize the synthetic environment by editing `.blend` files on your host machine, **you must use the exact same version of Blender (or at least the 3.6.x LTS series)** as the container. If you save a scene using a newer local version of Blender, the Docker container's synthetic capture scripts will fail to read it (throwing a `not a blend file` error).
+
 ### Option A: Local Setup
 1. Install [Blender (3.6+ recommended)](https://www.blender.org/download/). Ensure `blender` is accessible via your system PATH.
 2. Install Python dependencies:
