@@ -15,12 +15,9 @@ import config
 
 # 1. Load Intrinsic parameters dynamically
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-if os.path.exists("/workspace/data/calibration/intrinsic/params/intrinsic_params.npz"):
-    params_path = "/workspace/data/calibration/intrinsic/params/intrinsic_params.npz"
-else:
-    params_path = os.path.join(
-        base_dir, "data/calibration/intrinsic/params/intrinsic_params.npz"
-    )
+params_path = os.path.join(
+    base_dir, "data/calibration/intrinsic/params/intrinsic_params.npz"
+)
 
 if not os.path.exists(params_path):
     print(f"Error: Intrinsic parameters not found at {params_path}")

@@ -11,16 +11,10 @@ import bpy
 
 def main():
     # Determine project root (base_dir)
-    if os.path.exists("/workspace"):
-        base_dir = "/workspace"
-    else:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
-    # Auto-adapt path: use base_dir/scenes or fall back to /workspace/scenes
     scene_path = os.path.join(base_dir, "scenes", "svm_v1.blend")
-    if not os.path.exists(scene_path):
-        scene_path = "/workspace/scenes/svm_v1.blend"
 
     output_dir = os.path.join(base_dir, "data", "calibration", "extrinsic", "images")
     os.makedirs(output_dir, exist_ok=True)

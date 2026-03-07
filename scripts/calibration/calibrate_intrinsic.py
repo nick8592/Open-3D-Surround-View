@@ -24,11 +24,8 @@ def calibrate():
     imgpoints = []  # 2D points in image plane
 
     # Determine project root (base_dir)
-    if os.path.exists("/workspace/data/calibration"):
-        base_dir = "/workspace"
-    else:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
     # Define paths based on project root
     input_pattern = os.path.join(base_dir, "data/calibration/intrinsic/images/*.png")

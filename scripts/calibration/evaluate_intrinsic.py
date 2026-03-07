@@ -12,11 +12,8 @@ import numpy as np
 
 def verify():
     # Determine project root (base_dir)
-    if os.path.exists("/workspace/data/calibration"):
-        base_dir = "/workspace"
-    else:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
     img_path = os.path.join(
         base_dir, "data/calibration/intrinsic/images/intrinsic_calib_0.png"

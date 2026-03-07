@@ -12,13 +12,9 @@ import bpy
 
 def main():
     # Determine project root (base_dir)
-    # Check if /workspace exists (Docker), otherwise use relative path from script
-    if os.path.exists("/workspace"):
-        base_dir = "/workspace"
-    else:
-        # Script is in scripts/simulation/, so project root is two levels up
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
+    # Script is in scripts/synthetic_capture/, so project root is two levels up
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
     output_dir = os.path.join(base_dir, "data", "calibration", "intrinsic", "images")
     os.makedirs(output_dir, exist_ok=True)
