@@ -5,7 +5,7 @@ Transitioning an Automotive Surround-View Monitor (SVM) from a 2D plane to a 3D 
 ---
 
 ## 4.1 The Limits of 2D Bird's-Eye View (BEV)
-In the traditional 2D Bird's-Eye View (e.g., `scripts/bev_2d`), the fundamental mathematical assumption of the engine is that **the entire world exists on a perfectly flat plane ($Z=0$)**.
+In the traditional 2D Bird's-Eye View (e.g., `pipeline/bev_2d`), the fundamental mathematical assumption of the engine is that **the entire world exists on a perfectly flat plane ($Z=0$)**.
 
 When the system calculates which pixel to extract from the fisheye cameras, it evaluates $X$ and $Y$ metrics on the road and forces $Z=0$ into the Extrinsic Matrix.
 **The Problem:** Because everything is assumed flat, standing objects (like light poles, adjacent cars, or curbs) are mathematically treated as "incredibly long smudges painted flat along the street." When the vehicle approaches them, they undergo extreme radial stretching and deformation, degrading spatial awareness for the driver.
@@ -21,7 +21,7 @@ A modern "3D SVM" solves this by extruding the ground mesh into a shape resembli
 
 ## 4.3 Engineering Challenges & Mathematical Solutions
 
-In our codebase (`scripts/bowl_3d/build_bowl.py`), we implement specific logic to overcome infamous industry rendering artifacts.
+In our codebase (`pipeline/bowl_3d/build_bowl.py`), we implement specific logic to overcome infamous industry rendering artifacts.
 
 ### 1. Parallax Ghosting (The Rounded-Rectangle Solution)
 **Symptom:** Ghosting or "Double Vision" appears on the ground mapping.
@@ -38,7 +38,7 @@ In our codebase (`scripts/bowl_3d/build_bowl.py`), we implement specific logic t
 ## 4.4 The Hardware Runtime Simulator (LUT based rendering)
 When shifting to 3D, many assume the pipeline works like a Video Game: rendering a 3D car and running environmental Ray-Casting. **This is too slow for real-time car hardware (ECUs).**
 
-Our `/scripts/bowl_3d/` codebase perfectly mimics production Automotive systems:
+Our `/pipeline/bowl_3d/` codebase perfectly mimics production Automotive systems:
 1. **Offline Physics Calculation (`stitching_bowl.py`):** 
    - A rigorous physics engine processes the complex 3D Bowl topology. It calculates the exact physical $Z$-height of the curved walls and calculates its Extrinsic/Intrinsic UV intersection against the 4 fisheye cameras.
 2. **Look-Up Table (LUT) Caching:**

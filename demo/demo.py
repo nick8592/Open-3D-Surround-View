@@ -78,15 +78,15 @@ def run_script(script_path, interpreter="python3", extra_args=None):
 print("\nInjecting data into SVM engine...\n")
 
 # Run 2D BEV Pipeline
-run_script("scripts/bev_2d/stitching_bev.py")
-run_script("scripts/bev_2d/render_bev.py")
+run_script("pipeline/bev_2d/stitching_bev.py")
+run_script("pipeline/bev_2d/render_bev.py")
 shutil.copy(os.path.join(base_dir, "data/bev_2d/realtime_demo_bev.png"), os.path.join(demo_dir, "demo_bev.png"))
 print("2D BEV Engine Complete! Exported: demo/demo_bev.png\n")
 
 # Run 3D Bowl Pipeline
-run_script("scripts/bowl_3d/build_bowl.py")
-run_script("scripts/bowl_3d/stitching_bowl.py")
-run_script("scripts/bowl_3d/render_bowl.py")
+run_script("pipeline/bowl_3d/build_bowl.py")
+run_script("pipeline/bowl_3d/stitching_bowl.py")
+run_script("pipeline/bowl_3d/render_bowl.py")
 shutil.copy(os.path.join(base_dir, "data/bowl_3d/realtime_demo_bowl.png"), os.path.join(demo_dir, "demo_bowl.png"))
 print("3D Bowl ECU Render Complete! Exported: demo/demo_bowl.png\n")
 

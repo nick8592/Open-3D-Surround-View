@@ -44,7 +44,7 @@ This document provides a detailed overview of the mathematical, rendering, and l
 ├── scenes/                                 # 3D Topology Assets
 │   ├── svm_v1.blend                        # Core vehicle mounting & camera rig Blender scene
 │   └── calib_intrinsic.blend               # Synthetic room used exclusively to capture 15 checking angles
-├── scripts/                                # Mathematics and Physics Source Code
+├── pipeline/                                # Mathematics and Physics Source Code
 │   ├── bev_2d/
 │   │   ├── evaluate_bev.py                 # Evaluates flat stitching alignment via Sub-pixel Photometric error checking
 │   │   ├── render_bev.py                   # High-performance simulation loop evaluating flat plane real-time rendering

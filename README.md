@@ -63,31 +63,73 @@ docker run -it -v $(pwd):/app open3dsv
 ## Full Pipeline Usage
 If you want to run the core stitching and projection engine on existing calibrated parameters, follow this sequence:
 
+### One-Command Runner (`run_pipeline.sh`)
+The `run_pipeline.sh` script executes all stages sequentially with a single command:
+
+```bash
+# Run the full pipeline (capture stage requires a Blender .blend scene file)
+./run_pipeline.sh --scene scenes/svm_v1.blend
+
+# Skip capture and use existing calibration data
+./run_pipeline.sh --skip-capture
+
+# Re-run only extrinsic (intrinsic already done)
+./run_pipeline.sh --scene scenes/svm_v1.blend --skip-capture-intrinsic --skip-calibrate-intrinsic
+
+# Run only BEV and Bowl stages (e.g. when calibration is already done)
+./run_pipeline.sh --skip-capture --skip-calibration
+```
+
+**Stage-level flags** (skip entire stage):
+| Flag | Description |
+|---|---|
+| `-s, --scene <file>` | Path to Blender `.blend` scene (required for capture stage) |
+| `--skip-capture` | Skip entire synthetic capture stage |
+| `--skip-calibration` | Skip entire calibration stage |
+| `--skip-bev` | Skip entire BEV 2D stage |
+| `--skip-bowl` | Skip entire Bowl 3D stage |
+| `--skip-gpu` | Skip GPU asset export stage |
+
+**Step-level flags** (skip individual scripts within a stage):
+| Flag | Skips |
+|---|---|
+| `--skip-capture-intrinsic` | `capture_intrinsic.py` |
+| `--skip-capture-extrinsic` | `capture_extrinsic.py` |
+| `--skip-calibrate-intrinsic` | `calibrate_intrinsic.py` |
+| `--skip-calibrate-extrinsic` | `calibrate_extrinsic.py` |
+| `--skip-bev-stitch` | `stitching_bev.py` |
+| `--skip-bev-render` | `render_bev.py` |
+| `--skip-bowl-build` | `build_bowl.py` |
+| `--skip-bowl-stitch` | `stitching_bowl.py` |
+| `--skip-bowl-render` | `render_bowl.py` |
+
+The steps below document each stage individually if you prefer to run them manually.
+
 ### Step 1: Generate 2D BEV (Flat Ground)
 Maps the 4 camera perspectives down to flat ground and creates highly optimized Look-Up Tables (LUTs) for rendering.
 ```bash
-python3 scripts/bev_2d/stitching_bev.py
+python3 pipeline/bev_2d/stitching_bev.py
 ```
 *(Check `data/bev_2d/bev.png`)*
 
 ### Step 2: Render 2D BEV (Simulated Real-Time)
 Uses the generated LUTs to render continuous composite frames (to simulate a real car driving).
 ```bash
-python3 scripts/bev_2d/render_bev.py
+python3 pipeline/bev_2d/render_bev.py
 ```
 *(Performance on Apple Silicon (VirtualApple @ 2.50GHz): ~74 FPS)*
 
 ### Step 3: Build & Stitch 3D Bowl
 Mathematically calculates the 3D topology and projects the camera textures onto the curved walls to fix edge stretching.
 ```bash
-python3 scripts/bowl_3d/build_bowl.py
-python3 scripts/bowl_3d/stitching_bowl.py
+python3 pipeline/bowl_3d/build_bowl.py
+python3 pipeline/bowl_3d/stitching_bowl.py
 ```
 
 ### Step 4: Render 3D Bowl (Simulated Real-Time)
 Uses the CPU-based CV2 Look-Up Tables to render the unified dashboard display (Python / OpenCV execution path).
 ```bash
-python3 scripts/bowl_3d/render_bowl.py
+python3 pipeline/bowl_3d/render_bowl.py
 ```
 *(Performance on Apple Silicon (VirtualApple @ 2.50GHz): ~42 FPS)*
 
@@ -95,14 +137,14 @@ python3 scripts/bowl_3d/render_bowl.py
 A production-grade rendering pipeline via OpenGL. This offloads the pixel-mapping LUT computations and image blending strictly to GLSL shaders, enabling massively parallel processing performance across the vehicle UI.
 ```bash
 # 1. Convert CPU Arrays to Raw Binary Float Maps (.bin) for the graphics card
-python3 scripts/gpu_render/export_gpu_assets.py
+python3 pipeline/gpu_render/export_gpu_assets.py
 
 # 2. Render utilizing PyOpenGL Hardware Shaders 
 # Note: If you are running strictly headless inside the Docker container, use xvfb-run to simulate a display buffer:
-xvfb-run -s "-screen 0 1280x720x24" python3 scripts/gpu_render/render_bowl_opengl.py
+xvfb-run -s "-screen 0 1280x720x24" python3 pipeline/gpu_render/render_bowl_opengl.py
 
 # If you are running natively on a host machine with a GUI and GPU attached, simply run:
-# python3 scripts/gpu_render/render_bowl_opengl.py
+# python3 pipeline/gpu_render/render_bowl_opengl.py
 ```
 *(Check `data/gpu_assets/debug/gpu_preview.png` to see the resulting composite frame output, and look at the terminal output to verify if your hardware GPU was successfully detected and what your exact FPS benchmark is!)*
 
@@ -114,20 +156,20 @@ Opens the Blender GUI with the generated OBJ and textures automatically loaded, 
 ```bash
 # Note: Since this opens a GUI, if you are running in a headless Docker environment 
 # without X11 forwarding, you must use xvfb-run to simulate a display buffer:
-xvfb-run -a blender -P scripts/blender_render/preview_3d_bowl.py
+xvfb-run -a blender -P pipeline/blender_render/preview_3d_bowl.py
 
 # If running natively with a display:
-# blender -P scripts/blender_render/preview_3d_bowl.py
+# blender -P pipeline/blender_render/preview_3d_bowl.py
 ```
 
 ### Render Cinematic Turntable Animation
 Executes a simulated "flying chase camera" spin around the 3D Bowl layout in headless mode and exports an MP4 cinematic video.
 ```bash
 # Note: Even in background mode (-b), Blender requires a display server in Docker. Use xvfb-run:
-xvfb-run -a blender -b -P scripts/blender_render/render_cinematic.py
+xvfb-run -a blender -b -P pipeline/blender_render/render_cinematic.py
 
 # If running natively:
-# blender -b -P scripts/blender_render/render_cinematic.py
+# blender -b -P pipeline/blender_render/render_cinematic.py
 ```
 
 ## Calibration Guide
@@ -138,16 +180,16 @@ Computes the internal properties of the fisheye lens (`K` and `D`).
 ```bash
 # 1. Synthetically capture checkerboards using Blender
 # Note: If running inside the headless Docker container, use xvfb-run:
-xvfb-run -a blender -b scenes/calib_intrinsic.blend -P scripts/synthetic_capture/capture_intrinsic.py
+xvfb-run -a blender -b scenes/calib_intrinsic.blend -P pipeline/synthetic_capture/capture_intrinsic.py
 
 # If running natively:
-# blender -b scenes/calib_intrinsic.blend -P scripts/synthetic_capture/capture_intrinsic.py
+# blender -b scenes/calib_intrinsic.blend -P pipeline/synthetic_capture/capture_intrinsic.py
 
 # 2. Run OpenCV mathematical solver
-python3 scripts/calibration/calibrate_intrinsic.py
+python3 pipeline/calibration/calibrate_intrinsic.py
 
 # 3. Evaluate the calibration (plumb-line curvature)
-python3 scripts/calibration/evaluate_intrinsic.py
+python3 pipeline/calibration/evaluate_intrinsic.py
 ```
 
 ### Extrinsic Calibration (Physical Camera Setup)
@@ -155,16 +197,16 @@ Computes the physical (X, Y, Z, Yaw, Pitch, Roll) orientation of the cameras map
 ```bash
 # 1. Capture the 4 cameras looking at the floor checkerboards
 # Note: If running inside the headless Docker container, use xvfb-run:
-xvfb-run -a blender -b scenes/svm_v1.blend -P scripts/synthetic_capture/capture_extrinsic.py
+xvfb-run -a blender -b scenes/svm_v1.blend -P pipeline/synthetic_capture/capture_extrinsic.py
 
 # If running natively:
-# blender -b scenes/svm_v1.blend -P scripts/synthetic_capture/capture_extrinsic.py
+# blender -b scenes/svm_v1.blend -P pipeline/synthetic_capture/capture_extrinsic.py
 
 # 2. Run OpenCV mathematical solver 
-python3 scripts/calibration/calibrate_extrinsic.py
+python3 pipeline/calibration/calibrate_extrinsic.py
 
 # 3. Evaluate the calibration (3D sub-pixel reprojection error)
-python3 scripts/calibration/evaluate_extrinsic.py
+python3 pipeline/calibration/evaluate_extrinsic.py
 ```
 
 ## Advanced Usage
@@ -188,7 +230,7 @@ MASK_RADIUS_SCALE = 1.05  # > 1.0 reduces masking on edges, letting camera see w
 ### Checking Photometric Error
 To mathematically evaluate the exact sub-pixel overlap precision where the 4 camera fields-of-view blend together:
 ```bash
-python3 scripts/bev_2d/evaluate_bev.py
+python3 pipeline/bev_2d/evaluate_bev.py
 ```
 *(This will generate a visual error heatmap in `data/bev_2d/debug/`)*
 

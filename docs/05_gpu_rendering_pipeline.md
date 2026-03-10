@@ -34,10 +34,10 @@ This step executes constantly in a loop (`render_bowl_opengl.py`), acting as our
 
 1. Compile the arrays to GPU Floating-Point formats:
    ```bash
-   python3 scripts/gpu_render/export_gpu_assets.py
+   python3 pipeline/gpu_render/export_gpu_assets.py
    ```
 2. Trigger the High-Performance Hardware pipeline natively:
    *(Running headless with Xvfb inside Docker to output `gpu_preview.png`)*
    ```bash
-   xvfb-run -s "-screen 0 1280x720x24" python3 scripts/gpu_render/render_bowl_opengl.py
+   xvfb-run -s "-screen 0 1280x720x24" python3 pipeline/gpu_render/render_bowl_opengl.py
    ```
