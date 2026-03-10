@@ -13,7 +13,7 @@ import bpy
 
 def main():
     # Determine project root (base_dir)
-    # Script is in scripts/synthetic_capture/, so project root is two levels up
+    # Script is in pipeline/synthetic_capture/, so project root is two levels up
     script_dir = os.path.dirname(os.path.abspath(__file__))
     base_dir = os.path.abspath(os.path.join(script_dir, "../../"))
 
@@ -24,7 +24,7 @@ def main():
     if not bpy.data.filepath:
         print("Error: No Blender scene file loaded.")
         print("Please specify a scene file when running the script:")
-        print("  blender -b scenes/<scene_name>.blend -P scripts/synthetic_capture/capture_intrinsic.py")
+        print("  blender -b scenes/<scene_name>.blend -P pipeline/synthetic_capture/capture_intrinsic.py")
         sys.exit(1)
 
     # Try to find a suitable camera

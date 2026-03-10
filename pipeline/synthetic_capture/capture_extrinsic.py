@@ -22,7 +22,7 @@ def main():
     if not bpy.data.filepath:
         print("Error: No Blender scene file loaded.")
         print("Please specify a scene file when running the script:")
-        print("  blender -b scenes/<scene_name>.blend -P scripts/synthetic_capture/capture_extrinsic.py")
+        print("  blender -b scenes/<scene_name>.blend -P pipeline/synthetic_capture/capture_extrinsic.py")
         sys.exit(1)
 
     # 3. Define camera list
