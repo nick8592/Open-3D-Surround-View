@@ -40,7 +40,8 @@ run_blender() {
 }
 
 # ── CLI options ──────────────────────────────────────────────────────────────
-SCENE_FILE=""        # path to .blend file (required for capture stage)
+SCENE_INTRINSIC=""   # path to calib_intrinsic.blend (required for capture_intrinsic)
+SCENE_EXTRINSIC=""   # path to svm_v1.blend      (required for capture_extrinsic)
 
 # Stage-level skips
 SKIP_CAPTURE=0
@@ -70,7 +71,8 @@ usage() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Stage-level flags (skip entire stage):"
-    echo "  -s, --scene <file>              Path to Blender .blend scene file (required for capture)"
+    echo "  --scene-intrinsic <file>        Path to calib_intrinsic.blend (required for capture_intrinsic)"
+    echo "  --scene-extrinsic <file>        Path to svm_v1.blend      (required for capture_extrinsic)"
     echo "  --skip-capture                  Skip entire synthetic capture stage"
     echo "  --skip-calibration              Skip entire calibration stage"
     echo "  --skip-bev                      Skip entire BEV 2D stage"
@@ -94,7 +96,8 @@ usage() {
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -s|--scene)                  SCENE_FILE="$2";           shift 2 ;;
+        --scene-intrinsic)           SCENE_INTRINSIC="$2";       shift 2 ;;
+        --scene-extrinsic)           SCENE_EXTRINSIC="$2";       shift 2 ;;
         --skip-capture)              SKIP_CAPTURE=1;             shift ;;
         --skip-calibration)          SKIP_CALIBRATION=1;         shift ;;
         --skip-bev)                  SKIP_BEV=1;                 shift ;;
@@ -122,21 +125,26 @@ echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━�
 log_stage "Stage 1 / 5 — Synthetic Capture"
 if [[ "$SKIP_CAPTURE" -eq 1 ]]; then
     log_skip "Capture stage skipped (--skip-capture)"
-elif [[ -z "$SCENE_FILE" ]]; then
-    log_skip "No --scene file provided; skipping capture stage"
-elif [[ ! -f "$SCENE_FILE" ]]; then
-    log_error "Scene file not found: $SCENE_FILE"
-    exit 1
 else
     if [[ "$SKIP_CAPTURE_INTRINSIC" -eq 1 ]]; then
         log_skip "capture_intrinsic.py (--skip-capture-intrinsic)"
+    elif [[ -z "$SCENE_INTRINSIC" ]]; then
+        log_skip "No --scene-intrinsic provided; skipping capture_intrinsic.py"
+    elif [[ ! -f "$SCENE_INTRINSIC" ]]; then
+        log_error "Scene file not found: $SCENE_INTRINSIC"
+        exit 1
     else
-        run_blender "$SCENE_FILE" pipeline/synthetic_capture/capture_intrinsic.py
+        run_blender "$SCENE_INTRINSIC" pipeline/synthetic_capture/capture_intrinsic.py
     fi
     if [[ "$SKIP_CAPTURE_EXTRINSIC" -eq 1 ]]; then
         log_skip "capture_extrinsic.py (--skip-capture-extrinsic)"
+    elif [[ -z "$SCENE_EXTRINSIC" ]]; then
+        log_skip "No --scene-extrinsic provided; skipping capture_extrinsic.py"
+    elif [[ ! -f "$SCENE_EXTRINSIC" ]]; then
+        log_error "Scene file not found: $SCENE_EXTRINSIC"
+        exit 1
     else
-        run_blender "$SCENE_FILE" pipeline/synthetic_capture/capture_extrinsic.py
+        run_blender "$SCENE_EXTRINSIC" pipeline/synthetic_capture/capture_extrinsic.py
     fi
 fi
 

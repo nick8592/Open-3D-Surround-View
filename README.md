@@ -67,14 +67,18 @@ If you want to run the core stitching and projection engine on existing calibrat
 The `run_pipeline.sh` script executes all stages sequentially with a single command:
 
 ```bash
-# Run the full pipeline (capture stage requires a Blender .blend scene file)
-./run_pipeline.sh --scene scenes/svm_v1.blend
+# Run the full pipeline (each capture step requires its own Blender .blend scene file)
+./run_pipeline.sh \
+  --scene-intrinsic scenes/calib_intrinsic.blend \
+  --scene-extrinsic scenes/svm_v1.blend
 
 # Skip capture and use existing calibration data
 ./run_pipeline.sh --skip-capture
 
-# Re-run only extrinsic (intrinsic already done)
-./run_pipeline.sh --scene scenes/svm_v1.blend --skip-capture-intrinsic --skip-calibrate-intrinsic
+# Re-run only extrinsic capture + calibration (intrinsic already done)
+./run_pipeline.sh \
+  --scene-extrinsic scenes/svm_v1.blend \
+  --skip-capture-intrinsic --skip-calibrate-intrinsic
 
 # Run only BEV and Bowl stages (e.g. when calibration is already done)
 ./run_pipeline.sh --skip-capture --skip-calibration
@@ -83,7 +87,8 @@ The `run_pipeline.sh` script executes all stages sequentially with a single comm
 **Stage-level flags** (skip entire stage):
 | Flag | Description |
 |---|---|
-| `-s, --scene <file>` | Path to Blender `.blend` scene (required for capture stage) |
+| `--scene-intrinsic <file>` | Path to `calib_intrinsic.blend` (required for `capture_intrinsic.py`) |
+| `--scene-extrinsic <file>` | Path to `svm_v1.blend` (required for `capture_extrinsic.py`) |
 | `--skip-capture` | Skip entire synthetic capture stage |
 | `--skip-calibration` | Skip entire calibration stage |
 | `--skip-bev` | Skip entire BEV 2D stage |
@@ -178,7 +183,7 @@ If you want to re-calibrate the cameras or change their physical locations on th
 ### Intrinsic Calibration (Lens Distortion)
 Computes the internal properties of the fisheye lens (`K` and `D`).
 ```bash
-# 1. Synthetically capture checkerboards using Blender
+# 1. Synthetically capture checkerboards using Blender (uses calib_intrinsic.blend)
 # Note: If running inside the headless Docker container, use xvfb-run:
 xvfb-run -a blender -b scenes/calib_intrinsic.blend -P pipeline/synthetic_capture/capture_intrinsic.py
 
@@ -195,7 +200,7 @@ python3 pipeline/calibration/evaluate_intrinsic.py
 ### Extrinsic Calibration (Physical Camera Setup)
 Computes the physical (X, Y, Z, Yaw, Pitch, Roll) orientation of the cameras mapped to the ISO 8855 automotive standard.
 ```bash
-# 1. Capture the 4 cameras looking at the floor checkerboards
+# 1. Capture the 4 cameras looking at the floor checkerboards (uses svm_v1.blend)
 # Note: If running inside the headless Docker container, use xvfb-run:
 xvfb-run -a blender -b scenes/svm_v1.blend -P pipeline/synthetic_capture/capture_extrinsic.py
 
