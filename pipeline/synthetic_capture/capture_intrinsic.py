@@ -86,6 +86,16 @@ def main():
         ((-0.8, 0.8, 1.6), (math.radians(-20), math.radians(-20), math.radians(-45))),
         ((0.8, -0.8, 1.6), (math.radians(20), math.radians(20), math.radians(-45))),
         ((0, 0, 1.8), (0, 0, math.radians(90))),  # Top-down with 90deg roll
+
+        # --- Group E: Extreme Angles Near Image Borders (8 images) ---
+        ((0, 0, 1), (math.radians(50), 0, 0)),   # Bottom
+        ((0, 0, 1), (math.radians(-50), 0, 0)),  # Top
+        ((0, 0, 1), (0, math.radians(-50), 0)),  # Left
+        ((0, 0, 1), (0, math.radians(50), 0)),   # Right
+        ((0, 0, 1), (math.radians(-30), math.radians(40), math.radians(45))),   # Top-right
+        ((0, 0, 1), (math.radians(30), math.radians(40), math.radians(45))),    # Bottom-right
+        ((0, 0, 1), (math.radians(-30), math.radians(-40), math.radians(45))),  # Top-left
+        ((0, 0, 1), (math.radians(30), math.radians(-40), math.radians(45))),   # Bottom-left
     ]
 
     for i, (loc, rot) in enumerate(captures):

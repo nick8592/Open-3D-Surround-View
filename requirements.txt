@@ -1,7 +1,7 @@
 # Core Computing & Visual Processing
 # Warning: NumPy 2.x introduces C-API breaking changes with many pre-compiled CV packages. Strictly capping <2.
 numpy<2.0.0
-opencv-python>=4.5.4
+opencv-python==4.5.4.60
 PyYAML>=6.0.3
 scipy>=1.10.0
 matplotlib>=3.10.0
